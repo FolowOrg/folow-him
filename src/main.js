@@ -24,7 +24,8 @@ const state = {
   profile: null,
   content: null,
   authMode: 'login',
-  recoveryMode: false
+  recoveryMode: false,
+  prayerFilter: 'All'
 }
 
 const prayerCategories = [
@@ -133,6 +134,7 @@ function authView() {
   return `<main class="auth">
     <div class="mark">❧</div>
     <h1>Folow Him</h1>
+
     <p class="tag">
       A gentle place to pray, reflect, and remember His faithfulness.
     </p>
@@ -413,6 +415,16 @@ async function prayersView() {
     .select('*')
     .order('updated_at', { ascending: false })
 
+  const filteredPrayers = prayers.filter(prayer => {
+    if (state.prayerFilter === 'All') {
+      return true
+    }
+
+    const category = prayer.category || 'Other'
+
+    return category === state.prayerFilter
+  })
+
   return `<main>
 
     <div class="section-title">
@@ -467,60 +479,90 @@ async function prayersView() {
 
     </section>
 
+    <section class="card prayer-filters">
+
+      <p class="eyebrow">
+        FILTER PRAYERS
+      </p>
+
+      <div class="filter-row">
+
+        <button
+          type="button"
+          class="filter-button ${state.prayerFilter === 'All' ? 'active' : ''}"
+          data-prayer-filter="All"
+        >
+          All
+        </button>
+
+        ${
+          prayerCategories.map(category => `
+            <button
+              type="button"
+              class="filter-button ${state.prayerFilter === category ? 'active' : ''}"
+              data-prayer-filter="${esc(category)}"
+            >
+              ${esc(category)}
+            </button>
+          `).join('')
+        }
+
+      </div>
+
+    </section>
+
     <div class="list">
 
       ${
-        prayers.map(p => `
-          <article class="entry">
+        filteredPrayers.length
+          ? filteredPrayers.map(p => `
+              <article class="entry">
 
-            <div class="row">
+                <div class="row">
 
-              <span class="pill ${esc(p.status)}">
-                ${esc(p.status)}
-              </span>
+                  <span class="pill ${esc(p.status)}">
+                    ${esc(p.status)}
+                  </span>
 
-              ${
-                p.category
-                  ? `<span class="pill">
-                      ${esc(p.category)}
-                    </span>`
-                  : ''
-              }
+                  <span class="pill">
+                    ${esc(p.category || 'Other')}
+                  </span>
 
-              ${
-                p.status === 'active'
-                  ? `<button
-                      class="small"
-                      data-answer="${esc(p.id)}"
-                    >
-                      Mark answered
-                    </button>`
-                  : ''
-              }
+                  ${
+                    p.status === 'active'
+                      ? `<button
+                          class="small"
+                          data-answer="${esc(p.id)}"
+                        >
+                          Mark answered
+                        </button>`
+                      : ''
+                  }
 
-            </div>
+                </div>
 
-            <h3>
-              ${esc(p.title)}
-            </h3>
+                <h3>
+                  ${esc(p.title)}
+                </h3>
 
-            <p>
-              ${esc(p.details || '')}
-            </p>
+                <p>
+                  ${esc(p.details || '')}
+                </p>
 
-            ${
-              p.answer_note
-                ? `<p>
-                    <strong>Answer:</strong>
-                    ${esc(p.answer_note)}
-                  </p>`
-                : ''
-            }
+                ${
+                  p.answer_note
+                    ? `<p>
+                        <strong>Answer:</strong>
+                        ${esc(p.answer_note)}
+                      </p>`
+                    : ''
+                }
 
-          </article>
-        `).join('')
-        ||
-        '<p class="muted">No prayer requests yet.</p>'
+              </article>
+            `).join('')
+          : `<p class="muted">
+              No prayers found in this category.
+            </p>`
       }
 
     </div>
@@ -849,6 +891,17 @@ function bindApp() {
     })
 
   document
+    .querySelectorAll('[data-prayer-filter]')
+    .forEach(button => {
+      button.onclick = () => {
+        state.prayerFilter =
+          button.dataset.prayerFilter
+
+        render()
+      }
+    })
+
+  document
     .getElementById('signout')
     ?.addEventListener(
       'click',
@@ -857,6 +910,7 @@ function bindApp() {
 
         state.session = null
         state.view = 'home'
+        state.prayerFilter = 'All'
 
         render()
       }
