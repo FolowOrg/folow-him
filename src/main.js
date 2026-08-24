@@ -1,15 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import './styles.css'
 
-const supabaseUrl = 'https://lqrljwpiakhuaxaiywpy.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxxcmxqd3BpYWtodWF4YWl5d3B5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0Nzc0MzEsImV4cCI6MjEwMzA1MzQzMX0.VwsFJa0xkkpqMcVM0f3WmymkZ3p_HrSMR_uS0qkToOE'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase configuration. Check Vercel environment variables.')
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
-  global: {
-    headers: {
-      apikey: supabaseKey
-    }
-  },
   auth: {
     persistSession: true,
     autoRefreshToken: true,
