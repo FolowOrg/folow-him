@@ -3,8 +3,7 @@ import './styles.css'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
-console.log('SUPABASE URL:', supabaseUrl)
-console.log('SUPABASE KEY PREFIX:', supabaseKey?.slice(0, 20))
+
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Missing Supabase configuration. Check Vercel environment variables.')
