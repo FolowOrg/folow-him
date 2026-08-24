@@ -139,6 +139,22 @@ function authView() {
     </section>
   </main>`
 }
+function recoveryView() {
+  return `<main class="auth"><div class="mark">❧</div><h1>Folow Him</h1>
+  <p class="tag">Choose a new password for your account.</p>
+  <section class="card">
+  <form id="recoveryForm">
+  <label>New password
+    <input id="newPassword" type="password" minlength="8" required placeholder="At least 8 characters">
+  </label>
+  <label>Confirm new password
+    <input id="confirmPassword" type="password" minlength="8" required placeholder="Enter it again">
+  </label>
+  <button class="primary" type="submit">Update password</button>
+  <p id="recoveryMsg" class="msg" aria-live="polite"></p>
+  </form>
+  </section></main>`
+}
 function shell(content) {
   return `<div class="app-shell"><header><div class="brand"><span class="leaf">❧</span><span>Folow Him</span></div><button class="ghost" id="signout">Sign out</button></header>${content}
   <nav class="bottom-nav"><button data-view="home">Today</button><button data-view="journal">Journal</button><button data-view="prayers">Prayers</button><button data-view="profile">Profile</button></nav></div>`
@@ -170,7 +186,17 @@ async function profileView() {
   return `<main><div class="section-title"><p class="eyebrow">PROFILE</p><h2>Welcome, ${esc(name)}.</h2></div><section class="card"><p class="eyebrow">ACCOUNT</p><p>${esc(state.session.user.email)}</p><p class="muted">Your private journal and prayer requests are protected by Supabase Row Level Security.</p></section></main>`
 }
 async function render() {
-  if(!state.session){root.innerHTML=authView();bindAuth();return}
+  if (state.recovery) {
+    root.innerHTML = recoveryView()
+    bindRecovery()
+    return
+  }
+
+  if(!state.session){
+    root.innerHTML=authView()
+    bindAuth()
+    return
+  }
   let content=state.view==='journal'?await journalView():state.view==='prayers'?await prayersView():state.view==='profile'?await profileView():await homeView()
   root.innerHTML=shell(content);bindApp()
 }
@@ -310,6 +336,51 @@ function bindAuth() {
     }
   }
 }
+function bindRecovery() {
+  document.getElementById('recoveryForm').onsubmit = async e => {
+    e.preventDefault()
+
+    const newPassword = document.getElementById('newPassword').value
+    const confirmPassword = document.getElementById('confirmPassword').value
+    const msg = document.getElementById('recoveryMsg')
+
+    if (newPassword !== confirmPassword) {
+      msg.textContent = 'The passwords do not match.'
+      return
+    }
+
+    if (newPassword.length < 8) {
+      msg.textContent = 'Your password must be at least 8 characters.'
+      return
+    }
+
+    msg.textContent = 'Updating your password…'
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) {
+        msg.textContent = `Password could not be updated: ${error.message}`
+        return
+      }
+
+      msg.textContent = 'Password updated successfully. You can now sign in.'
+
+      setTimeout(async () => {
+        await supabase.auth.signOut()
+        state.session = null
+        state.recovery = false
+        state.authMode = 'login'
+        await render()
+      }, 1500)
+
+    } catch (error) {
+      msg.textContent = `Password could not be updated: ${error?.message || 'Please try again.'}`
+    }
+  }
+}
 function bindApp(){
   document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;render()})
   document.getElementById('signout')?.addEventListener('click',async()=>{await supabase.auth.signOut();state.session=null;state.view='home';render()})
@@ -318,15 +389,23 @@ function bindApp(){
   document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=async()=>{const note=window.prompt('How did God answer this prayer?');const r=await supabase.from('prayer_requests').update({status:'answered',answered_at:new Date().toISOString(),answer_note:note||null}).eq('id',b.dataset.answer);if(!r.error)render()})
 }
 supabase.auth.onAuthStateChange(async (event, session) => {
-  state.session = session
+  console.log('AUTH EVENT:', event)
 
   if (event === 'PASSWORD_RECOVERY') {
-    state.recoveryMode = true
-    render()
+    state.session = session
+    state.recovery = true
+    await render()
     return
   }
 
-  if (session) {
+  state.session = session
+
+  if (event === 'SIGNED_OUT') {
+    state.recovery = false
+    state.view = 'home'
+  }
+
+  if (session && !state.recovery) {
     await Promise.all([loadProfile(), loadToday()])
   }
 
