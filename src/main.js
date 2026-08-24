@@ -1000,35 +1000,48 @@ function bindApp() {
     )
 
   document
-    .querySelectorAll('[data-answer]')
-    .forEach(b => {
-      b.onclick = async () => {
+  .querySelectorAll('[data-answer]')
+  .forEach(b => {
+    b.onclick = async () => {
 
-        const note =
-          window.prompt(
-            'How did God answer this prayer?'
+      const note = window.prompt(
+        'How did God answer this prayer?'
+      )
+
+      // If the user clicks Cancel, do nothing.
+      if (note === null) {
+        return
+      }
+
+      const r =
+        await supabase
+          .from('prayer_requests')
+          .update({
+            status: 'answered',
+            answered_at:
+              new Date().toISOString(),
+            answer_note:
+              note.trim() || null
+          })
+          .eq(
+            'id',
+            b.dataset.answer
           )
 
-        const r =
-          await supabase
-            .from('prayer_requests')
-            .update({
-              status: 'answered',
-              answered_at:
-                new Date().toISOString(),
-              answer_note:
-                note || null
-            })
-            .eq(
-              'id',
-              b.dataset.answer
-            )
+      if (r.error) {
+        const msg = document.getElementById('prayerMsg')
 
-        if (!r.error) {
-          render()
+        if (msg) {
+          msg.textContent =
+            `Prayer could not be updated: ${r.error.message}`
         }
+
+        return
       }
-    })
+
+      await render()
+    }
+  })
 }
 
 supabase.auth.onAuthStateChange(
