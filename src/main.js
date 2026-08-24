@@ -20,7 +20,14 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 })
 
 const root = document.getElementById('root')
-const state = { session: null, view: 'home', profile: null, content: null, authMode: 'login' }
+const state = {
+  session: null,
+  view: 'home',
+  profile: null,
+  content: null,
+  authMode: 'login',
+  recoveryMode: false
+}
 
 async function loadSession() {
   const { data: { session } } = await supabase.auth.getSession()
@@ -40,17 +47,98 @@ async function loadToday() {
 function esc(s='') { return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])) }
 
 function authView() {
-  return `<main class="auth"><div class="mark">❧</div><h1>Folow Him</h1>
-  <p class="tag">A gentle place to pray, reflect, and remember His faithfulness.</p>
-  <section class="card"><div class="tabs">
-  <button id="loginTab" class="${state.authMode==='login'?'active':''}">Sign in</button>
-  <button id="signupTab" class="${state.authMode==='signup'?'active':''}">Create account</button></div>
-  <form id="authForm">
-  <label>Email<input id="email" type="email" required placeholder="you@example.com"></label>
-  <label>Password<input id="password" type="password" minlength="8" required placeholder="At least 8 characters"></label>
-  <button class="primary" type="submit">Continue</button>
-  <button type="button" class="link" id="reset">Forgot your password?</button>
-  <p id="authMsg" class="msg" aria-live="polite"></p></form></section></main>`
+  if (state.recoveryMode) {
+    return `<main class="auth">
+      <div class="mark">❧</div>
+      <h1>Folow Him</h1>
+      <p class="tag">Create a new password for your account.</p>
+
+      <section class="card">
+        <form id="recoveryForm">
+          <label>
+            New password
+            <input
+              id="newPassword"
+              type="password"
+              minlength="8"
+              required
+              autocomplete="new-password"
+              placeholder="At least 8 characters"
+            >
+          </label>
+
+          <label>
+            Confirm new password
+            <input
+              id="confirmPassword"
+              type="password"
+              minlength="8"
+              required
+              autocomplete="new-password"
+              placeholder="Enter your password again"
+            >
+          </label>
+
+          <button class="primary" type="submit">
+            Save new password
+          </button>
+
+          <p id="recoveryMsg" class="msg" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>`
+  }
+
+  return `<main class="auth">
+    <div class="mark">❧</div>
+    <h1>Folow Him</h1>
+    <p class="tag">A gentle place to pray, reflect, and remember His faithfulness.</p>
+
+    <section class="card">
+      <div class="tabs">
+        <button id="loginTab" class="${state.authMode==='login'?'active':''}">
+          Sign in
+        </button>
+
+        <button id="signupTab" class="${state.authMode==='signup'?'active':''}">
+          Create account
+        </button>
+      </div>
+
+      <form id="authForm">
+        <label>
+          Email
+          <input
+            id="email"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="you@example.com"
+          >
+        </label>
+
+        <label>
+          Password
+          <input
+            id="password"
+            type="password"
+            minlength="8"
+            required
+            autocomplete="current-password"
+            placeholder="At least 8 characters"
+          >
+        </label>
+
+        <button class="primary" type="submit">Continue</button>
+
+        <button type="button" class="link" id="reset">
+          Forgot your password?
+        </button>
+
+        <p id="authMsg" class="msg" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>`
 }
 function shell(content) {
   return `<div class="app-shell"><header><div class="brand"><span class="leaf">❧</span><span>Folow Him</span></div><button class="ghost" id="signout">Sign out</button></header>${content}
@@ -88,31 +176,139 @@ async function render() {
   root.innerHTML=shell(content);bindApp()
 }
 function bindAuth() {
-  document.getElementById('loginTab').onclick=()=>{state.authMode='login';render()}
-  document.getElementById('signupTab').onclick=()=>{state.authMode='signup';render()}
-  document.getElementById('authForm').onsubmit=async e=>{
-    e.preventDefault()
-    const email=document.getElementById('email').value.trim(), password=document.getElementById('password').value, msg=document.getElementById('authMsg')
-    msg.textContent='Please wait…'
-    try {
-      const result=state.authMode==='signup'?await supabase.auth.signUp({email,password}):await supabase.auth.signInWithPassword({email,password})
-      if(result.error){
-        const raw=result.error.message||'Authentication failed.'
-        msg.textContent=/invalid login credentials/i.test(raw)?'The email or password is incorrect. Try again or use Forgot your password.':/email not confirmed/i.test(raw)?'Please confirm your email address before signing in.':raw
+  if (state.recoveryMode) {
+    const form = document.getElementById('recoveryForm')
+
+    form.onsubmit = async e => {
+      e.preventDefault()
+
+      const newPassword = document.getElementById('newPassword').value
+      const confirmPassword = document.getElementById('confirmPassword').value
+      const msg = document.getElementById('recoveryMsg')
+
+      if (newPassword.length < 8) {
+        msg.textContent = 'Your password must be at least 8 characters.'
         return
       }
-      msg.textContent=state.authMode==='signup'?'Check your email to confirm your account.':'Welcome back.'
-    } catch(error){msg.textContent=error?.message||'Something went wrong. Please try again.'}
+
+      if (newPassword !== confirmPassword) {
+        msg.textContent = 'The passwords do not match.'
+        return
+      }
+
+      msg.textContent = 'Saving your new password…'
+
+      try {
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword
+        })
+
+        if (error) {
+          msg.textContent = `Password could not be updated: ${error.message}`
+          return
+        }
+
+        msg.textContent = 'Password updated successfully. Welcome back!'
+
+        // Remove the recovery token from the browser URL.
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname + window.location.search
+        )
+
+        state.recoveryMode = false
+        state.view = 'home'
+
+        await loadSession()
+
+      } catch (error) {
+        msg.textContent =
+          `Password could not be updated: ${error?.message || 'Please try again.'}`
+      }
+    }
+
+    return
   }
-  document.getElementById('reset').onclick=async e=>{
+
+  document.getElementById('loginTab').onclick = () => {
+    state.authMode = 'login'
+    render()
+  }
+
+  document.getElementById('signupTab').onclick = () => {
+    state.authMode = 'signup'
+    render()
+  }
+
+  document.getElementById('authForm').onsubmit = async e => {
     e.preventDefault()
-    const input=document.getElementById('email'), msg=document.getElementById('authMsg'), email=input.value.trim()
-    if(!email){msg.textContent='Enter your email address above, then click Forgot your password again.';input.focus();return}
-    msg.textContent='Sending password reset email…'
+
+    const email = document.getElementById('email').value.trim()
+    const password = document.getElementById('password').value
+    const msg = document.getElementById('authMsg')
+
+    msg.textContent = 'Please wait…'
+
     try {
-      const result=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin})
-      msg.textContent=result.error?`Password reset could not be sent: ${result.error.message}`:'Password reset instructions were sent. Check your email.'
-    } catch(error){msg.textContent=`Password reset could not be sent: ${error?.message||'Please try again.'}`}
+      const result =
+        state.authMode === 'signup'
+          ? await supabase.auth.signUp({ email, password })
+          : await supabase.auth.signInWithPassword({ email, password })
+
+      if (result.error) {
+        const raw = result.error.message || 'Authentication failed.'
+
+        msg.textContent =
+          /invalid login credentials/i.test(raw)
+            ? 'The email or password is incorrect. Try again or use Forgot your password.'
+            : /email not confirmed/i.test(raw)
+              ? 'Please confirm your email address before signing in.'
+              : raw
+
+        return
+      }
+
+      msg.textContent =
+        state.authMode === 'signup'
+          ? 'Check your email to confirm your account.'
+          : 'Welcome back.'
+
+    } catch (error) {
+      msg.textContent =
+        error?.message || 'Something went wrong. Please try again.'
+    }
+  }
+
+  document.getElementById('reset').onclick = async e => {
+    e.preventDefault()
+
+    const input = document.getElementById('email')
+    const msg = document.getElementById('authMsg')
+    const email = input.value.trim()
+
+    if (!email) {
+      msg.textContent =
+        'Enter your email address above, then click Forgot your password again.'
+      input.focus()
+      return
+    }
+
+    msg.textContent = 'Sending password reset email…'
+
+    try {
+      const result = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin
+      })
+
+      msg.textContent = result.error
+        ? `Password reset could not be sent: ${result.error.message}`
+        : 'Password reset instructions were sent. Check your email.'
+
+    } catch (error) {
+      msg.textContent =
+        `Password reset could not be sent: ${error?.message || 'Please try again.'}`
+    }
   }
 }
 function bindApp(){
@@ -122,5 +318,20 @@ function bindApp(){
   document.getElementById('prayerForm')?.addEventListener('submit',async e=>{e.preventDefault();const r=await supabase.from('prayer_requests').insert({user_id:state.session.user.id,title:document.getElementById('ptitle').value.trim(),details:document.getElementById('pdetails').value.trim()});document.getElementById('prayerMsg').textContent=r.error?.message||'Prayer saved.';if(!r.error)render()})
   document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=async()=>{const note=window.prompt('How did God answer this prayer?');const r=await supabase.from('prayer_requests').update({status:'answered',answered_at:new Date().toISOString(),answer_note:note||null}).eq('id',b.dataset.answer);if(!r.error)render()})
 }
-supabase.auth.onAuthStateChange(async(_event,session)=>{state.session=session;if(session)await Promise.all([loadProfile(),loadToday()]);render()})
+supabase.auth.onAuthStateChange(async (event, session) => {
+  state.session = session
+
+  if (event === 'PASSWORD_RECOVERY') {
+    state.recoveryMode = true
+    render()
+    return
+  }
+
+  if (session) {
+    await Promise.all([loadProfile(), loadToday()])
+  }
+
+  await render()
+})
+
 loadSession()
