@@ -5,16 +5,22 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase configuration. Check Vercel environment variables.')
+  throw new Error(
+    'Missing Supabase configuration. Check Vercel environment variables.'
+  )
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
+const supabase = createClient(
+  supabaseUrl,
+  supabaseKey,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
   }
-})
+)
 
 const root = document.getElementById('root')
 
@@ -25,7 +31,8 @@ const state = {
   content: null,
   authMode: 'login',
   recoveryMode: false,
-  reflectionPrayer: null
+  reflectionPrayer: null,
+  editingReflection: null
 }
 
 const prayerCategories = [
@@ -66,7 +73,10 @@ async function loadProfile() {
 }
 
 async function loadToday() {
-  const date = new Date().toISOString().slice(0, 10)
+  const date =
+    new Date()
+      .toISOString()
+      .slice(0, 10)
 
   const { data } = await supabase
     .from('daily_content')
@@ -90,18 +100,48 @@ function esc(s = '') {
   )
 }
 
+function formatDate(date) {
+  if (!date) return ''
+
+  const parsed = new Date(date)
+
+  if (Number.isNaN(parsed.getTime())) {
+    return esc(date)
+  }
+
+  return parsed.toLocaleDateString(
+    undefined,
+    {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }
+  )
+}
+
+/* =========================================================
+   AUTH
+========================================================= */
+
 function authView() {
   if (state.recoveryMode) {
     return `<main class="auth">
+
       <div class="mark">❧</div>
+
       <h1>Folow Him</h1>
-      <p class="tag">Create a new password for your account.</p>
+
+      <p class="tag">
+        Create a new password for your account.
+      </p>
 
       <section class="card">
+
         <form id="recoveryForm">
 
           <label>
             New password
+
             <input
               id="newPassword"
               type="password"
@@ -114,6 +154,7 @@ function authView() {
 
           <label>
             Confirm new password
+
             <input
               id="confirmPassword"
               type="password"
@@ -124,14 +165,23 @@ function authView() {
             >
           </label>
 
-          <button class="primary" type="submit">
+          <button
+            class="primary"
+            type="submit"
+          >
             Save new password
           </button>
 
-          <p id="recoveryMsg" class="msg" aria-live="polite"></p>
+          <p
+            id="recoveryMsg"
+            class="msg"
+            aria-live="polite"
+          ></p>
 
         </form>
+
       </section>
+
     </main>`
   }
 
@@ -142,7 +192,8 @@ function authView() {
     <h1>Folow Him</h1>
 
     <p class="tag">
-      A gentle place to pray, reflect, and remember His faithfulness.
+      A gentle place to pray, reflect,
+      and remember His faithfulness.
     </p>
 
     <section class="card">
@@ -169,6 +220,7 @@ function authView() {
 
         <label>
           Email
+
           <input
             id="email"
             type="email"
@@ -180,6 +232,7 @@ function authView() {
 
         <label>
           Password
+
           <input
             id="password"
             type="password"
@@ -190,7 +243,10 @@ function authView() {
           >
         </label>
 
-        <button class="primary" type="submit">
+        <button
+          class="primary"
+          type="submit"
+        >
           Continue
         </button>
 
@@ -232,6 +288,7 @@ function recoveryView() {
 
         <label>
           New password
+
           <input
             id="newPassword"
             type="password"
@@ -243,6 +300,7 @@ function recoveryView() {
 
         <label>
           Confirm new password
+
           <input
             id="confirmPassword"
             type="password"
@@ -252,7 +310,10 @@ function recoveryView() {
           >
         </label>
 
-        <button class="primary" type="submit">
+        <button
+          class="primary"
+          type="submit"
+        >
           Update password
         </button>
 
@@ -268,6 +329,10 @@ function recoveryView() {
 
   </main>`
 }
+
+/* =========================================================
+   APP SHELL
+========================================================= */
 
 function shell(content) {
   return `<div class="app-shell">
@@ -304,6 +369,10 @@ function shell(content) {
         Prayers
       </button>
 
+      <button data-view="memories">
+        Memories
+      </button>
+
       <button data-view="profile">
         Profile
       </button>
@@ -312,6 +381,10 @@ function shell(content) {
 
   </div>`
 }
+
+/* =========================================================
+   HOME
+========================================================= */
 
 async function homeView() {
   const c = state.content
@@ -329,11 +402,14 @@ async function homeView() {
       </h2>
 
       <p>
-        ${new Date().toLocaleDateString(undefined, {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric'
-        })}
+        ${new Date().toLocaleDateString(
+          undefined,
+          {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric'
+          }
+        )}
       </p>
 
     </div>
@@ -405,9 +481,9 @@ async function homeView() {
 
         <button
           class="secondary"
-          data-view="prayers"
+          data-view="memories"
         >
-          View answered prayers
+          Visit Memory Bank
         </button>
 
       </div>
@@ -417,13 +493,22 @@ async function homeView() {
   </main>`
 }
 
+/* =========================================================
+   JOURNAL
+========================================================= */
+
 async function journalView() {
-  const { data: entries = [] } = await supabase
+  const {
+    data: entries = []
+  } = await supabase
     .from('journal_entries')
     .select('*')
-    .order('entry_date', {
-      ascending: false
-    })
+    .order(
+      'entry_date',
+      {
+        ascending: false
+      }
+    )
     .limit(30)
 
   const c = state.content
@@ -485,7 +570,6 @@ async function journalView() {
             required
             placeholder="Write freely..."
           ></textarea>
-
         </label>
 
         <div class="voice-row">
@@ -524,26 +608,33 @@ async function journalView() {
     <div class="list">
 
       ${
-        entries.map(e => `
-          <article class="entry">
+        entries
+          .map(
+            e => `
+              <article class="entry">
 
-            <small>
-              ${esc(e.entry_date)}
-            </small>
+                <small>
+                  ${formatDate(e.entry_date)}
+                </small>
 
-            <h3>
-              ${esc(
-                e.title ||
-                'Prayer journal'
-              )}
-            </h3>
+                <h3>
+                  ${esc(
+                    e.title ||
+                    'Prayer journal'
+                  )}
+                </h3>
 
-            <p>
-              ${esc(e.body).slice(0, 280)}
-            </p>
+                <p>
+                  ${esc(e.body).slice(
+                    0,
+                    280
+                  )}
+                </p>
 
-          </article>
-        `).join('')
+              </article>
+            `
+          )
+          .join('')
         ||
         '<p class="muted">Your first entry can begin today.</p>'
       }
@@ -553,13 +644,22 @@ async function journalView() {
   </main>`
 }
 
+/* =========================================================
+   PRAYERS
+========================================================= */
+
 async function prayersView() {
-  const { data: prayers = [] } = await supabase
+  const {
+    data: prayers = []
+  } = await supabase
     .from('prayer_requests')
     .select('*')
-    .order('updated_at', {
-      ascending: false
-    })
+    .order(
+      'updated_at',
+      {
+        ascending: false
+      }
+    )
 
   return `<main>
 
@@ -599,10 +699,11 @@ async function prayersView() {
 
             ${
               prayerCategories
-                .map(category =>
-                  `<option value="${esc(category)}">
-                    ${esc(category)}
-                  </option>`
+                .map(
+                  category =>
+                    `<option value="${esc(category)}">
+                      ${esc(category)}
+                    </option>`
                 )
                 .join('')
             }
@@ -658,74 +759,91 @@ async function prayersView() {
     <div class="list">
 
       ${
-        prayers.map(p => `
-          <article class="entry">
+        prayers
+          .map(
+            p => `
+              <article class="entry">
 
-            <div class="row">
+                <div class="row">
 
-              <div>
+                  <div>
 
-                <span class="pill ${esc(p.status)}">
-                  ${esc(p.status)}
-                </span>
+                    <span class="pill ${esc(
+                      p.status
+                    )}">
+                      ${esc(p.status)}
+                    </span>
+
+                    ${
+                      p.category
+                        ? `<span class="pill">
+                            ${esc(
+                              p.category
+                            )}
+                          </span>`
+                        : ''
+                    }
+
+                  </div>
+
+                  ${
+                    p.status ===
+                    'active'
+                      ? `<button
+                          class="small"
+                          data-answer="${esc(
+                            p.id
+                          )}"
+                        >
+                          Mark answered
+                        </button>`
+                      : ''
+                  }
+
+                </div>
+
+                <h3>
+                  ${esc(p.title)}
+                </h3>
+
+                <p>
+                  ${esc(
+                    p.details || ''
+                  )}
+                </p>
 
                 ${
-                  p.category
-                    ? `<span class="pill">
-                        ${esc(p.category)}
-                      </span>`
+                  p.answer_note
+                    ? `<div class="answer-block">
+
+                        <p>
+                          <strong>
+                            Answer:
+                          </strong>
+
+                          ${esc(
+                            p.answer_note
+                          )}
+                        </p>
+
+                        <button
+                          type="button"
+                          class="secondary"
+                          data-reflect="${esc(
+                            p.id
+                          )}"
+                        >
+                          Reflect on this answer
+                        </button>
+
+                      </div>`
                     : ''
                 }
 
-              </div>
-
-              ${
-                p.status === 'active'
-                  ? `<button
-                      class="small"
-                      data-answer="${esc(p.id)}"
-                    >
-                      Mark answered
-                    </button>`
-                  : ''
-              }
-
-            </div>
-
-            <h3>
-              ${esc(p.title)}
-            </h3>
-
-            <p>
-              ${esc(p.details || '')}
-            </p>
-
-            ${
-              p.answer_note
-                ? `<div class="answer-block">
-
-                    <p>
-                      <strong>
-                        Answer:
-                      </strong>
-
-                      ${esc(p.answer_note)}
-                    </p>
-
-                    <button
-                      type="button"
-                      class="secondary"
-                      data-reflect="${esc(p.id)}"
-                    >
-                      Reflect on this answer
-                    </button>
-
-                  </div>`
-                : ''
-            }
-
-          </article>
-        `).join('')
+              </article>
+            `
+          )
+          .join('')
         ||
         '<p class="muted">No prayer requests yet.</p>'
       }
@@ -734,6 +852,10 @@ async function prayersView() {
 
   </main>`
 }
+
+/* =========================================================
+   REFLECTION
+========================================================= */
 
 function reflectionView(prayer) {
   const suggestedPrompt =
@@ -786,7 +908,9 @@ function reflectionView(prayer) {
               </p>
 
               <p>
-                ${esc(prayer.answer_note)}
+                ${esc(
+                  prayer.answer_note
+                )}
               </p>
 
             </div>`
@@ -806,8 +930,8 @@ function reflectionView(prayer) {
       </h3>
 
       <p class="muted">
-        This is only a suggestion. Your reflection can
-        be completely different.
+        This is only a suggestion.
+        Your reflection can be completely different.
       </p>
 
     </section>
@@ -817,7 +941,6 @@ function reflectionView(prayer) {
       <form id="reflectionForm">
 
         <label>
-
           Your personal reflection
 
           <textarea
@@ -828,7 +951,7 @@ function reflectionView(prayer) {
 
         </label>
 
-        <label class="checkbox-row">
+        <label class="memory-choice">
 
           <input
             id="saveMemory"
@@ -837,7 +960,16 @@ function reflectionView(prayer) {
           >
 
           <span>
-            Save this as a memory / lesson learned
+
+            <strong>
+              ✦ Keep this thought
+            </strong>
+
+            <small>
+              Save this reflection to your Memory Bank
+              so you can return to it later.
+            </small>
+
           </span>
 
         </label>
@@ -869,10 +1001,365 @@ function reflectionView(prayer) {
   </main>`
 }
 
+/* =========================================================
+   MEMORY BANK
+========================================================= */
+
+async function memoriesView() {
+  const {
+    data: memories = [],
+    error
+  } = await supabase
+    .from('prayer_reflections')
+    .select(`
+      *,
+      prayer_requests (
+        title,
+        details,
+        answer_note,
+        answered_at
+      )
+    `)
+    .eq(
+      'user_id',
+      state.session.user.id
+    )
+    .eq(
+      'save_as_memory',
+      true
+    )
+    .order(
+      'updated_at',
+      {
+        ascending: false
+      }
+    )
+
+  if (error) {
+    return `<main>
+
+      <div class="section-title">
+
+        <p class="eyebrow">
+          MEMORY BANK
+        </p>
+
+        <h2>
+          Remember His faithfulness.
+        </h2>
+
+      </div>
+
+      <section class="card">
+
+        <p class="msg">
+          Memories could not be loaded:
+          ${esc(error.message)}
+        </p>
+
+      </section>
+
+    </main>`
+  }
+
+  return `<main>
+
+    <div class="section-title">
+
+      <p class="eyebrow">
+        MEMORY BANK
+      </p>
+
+      <h2>
+        Remember His faithfulness.
+      </h2>
+
+      <p class="muted">
+        The thoughts, lessons, and revelations
+        you chose to keep.
+      </p>
+
+    </div>
+
+    ${
+      memories.length
+        ? `<div class="list">
+
+            ${memories
+              .map(memory => {
+
+                const prayer =
+                  memory.prayer_requests
+
+                return `
+                  <article class="memory-card">
+
+                    <div class="memory-header">
+
+                      <div>
+
+                        <p class="eyebrow">
+                          MEMORY
+                        </p>
+
+                        <small>
+                          Saved ${formatDate(
+                            memory.updated_at ||
+                            memory.created_at
+                          )}
+                        </small>
+
+                      </div>
+
+                      <button
+                        type="button"
+                        class="small"
+                        data-edit-memory="${esc(
+                          memory.id
+                        )}"
+                      >
+                        Edit reflection
+                      </button>
+
+                    </div>
+
+                    ${
+                      prayer
+                        ? `<div class="memory-prayer">
+
+                            <p class="eyebrow">
+                              ANSWERED PRAYER
+                            </p>
+
+                            <h3>
+                              ${esc(
+                                prayer.title
+                              )}
+                            </h3>
+
+                            ${
+                              prayer.answer_note
+                                ? `<p>
+                                    <strong>
+                                      Answer:
+                                    </strong>
+                                    ${esc(
+                                      prayer.answer_note
+                                    )}
+                                  </p>`
+                                : ''
+                            }
+
+                          </div>`
+                        : ''
+                    }
+
+                    <div class="memory-reflection">
+
+                      <p class="eyebrow">
+                        WHAT I WANT TO REMEMBER
+                      </p>
+
+                      <p>
+                        ${esc(
+                          memory.reflection_text
+                        )}
+                      </p>
+
+                    </div>
+
+                    ${
+                      memory.reflection_prompt
+                        ? `<div class="memory-prompt">
+
+                            <small>
+                              Reflection prompt
+                            </small>
+
+                            <p>
+                              ${esc(
+                                memory.reflection_prompt
+                              )}
+                            </p>
+
+                          </div>`
+                        : ''
+                    }
+
+                  </article>
+                `
+              })
+              .join('')}
+
+          </div>`
+        : `<section class="card empty-memory">
+
+            <div class="mark">
+              ❧
+            </div>
+
+            <h3>
+              Your Memory Bank is waiting.
+            </h3>
+
+            <p>
+              When an answered prayer teaches you something
+              you want to remember, save the reflection here.
+            </p>
+
+            <button
+              class="primary"
+              data-view="prayers"
+            >
+              Visit answered prayers
+            </button>
+
+          </section>`
+    }
+
+  </main>`
+}
+
+/* =========================================================
+   EDIT REFLECTION
+========================================================= */
+
+function editReflectionView(reflection) {
+  return `<main>
+
+    <div class="section-title">
+
+      <p class="eyebrow">
+        EDIT REFLECTION
+      </p>
+
+      <h2>
+        Keep learning from what God has done.
+      </h2>
+
+      <p class="muted">
+        Your reflection can grow as your understanding grows.
+        The original prayer and answer remain part of your story.
+      </p>
+
+    </div>
+
+    <section class="card">
+
+      <p class="eyebrow">
+        ANSWERED PRAYER
+      </p>
+
+      <h3>
+        ${esc(
+          reflection.prayer_requests?.title ||
+          'Answered prayer'
+        )}
+      </h3>
+
+      ${
+        reflection.prayer_requests?.answer_note
+          ? `<div class="scripture">
+
+              <p class="eyebrow">
+                WHAT HAPPENED
+              </p>
+
+              <p>
+                ${esc(
+                  reflection
+                    .prayer_requests
+                    .answer_note
+                )}
+              </p>
+
+            </div>`
+          : ''
+      }
+
+    </section>
+
+    <section class="card">
+
+      <form id="editReflectionForm">
+
+        <label>
+
+          Your reflection
+
+          <textarea
+            id="editReflectionText"
+            rows="10"
+            required
+            placeholder="Continue writing what you are learning..."
+          >${esc(
+            reflection.reflection_text
+          )}</textarea>
+
+        </label>
+
+        <label class="memory-choice">
+
+          <input
+            id="editSaveMemory"
+            type="checkbox"
+            ${
+              reflection.save_as_memory
+                ? 'checked'
+                : ''
+            }
+          >
+
+          <span>
+
+            <strong>
+              ✦ Keep this in my Memory Bank
+            </strong>
+
+            <small>
+              You can change this anytime.
+            </small>
+
+          </span>
+
+        </label>
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Save changes
+        </button>
+
+        <button
+          type="button"
+          class="link"
+          id="cancelEditReflection"
+        >
+          Cancel
+        </button>
+
+        <p
+          id="editReflectionMsg"
+          class="msg"
+        ></p>
+
+      </form>
+
+    </section>
+
+  </main>`
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
 async function profileView() {
   const name =
     state.profile?.display_name ||
-    state.session.user.email?.split('@')[0] ||
+    state.session.user.email
+      ?.split('@')[0] ||
     'friend'
 
   return `<main>
@@ -896,12 +1383,15 @@ async function profileView() {
       </p>
 
       <p>
-        ${esc(state.session.user.email)}
+        ${esc(
+          state.session.user.email
+        )}
       </p>
 
       <p class="muted">
-        Your private journal and prayer requests
-        are protected by Supabase Row Level Security.
+        Your private journal, prayers,
+        reflections, and memories are protected
+        by Supabase Row Level Security.
       </p>
 
     </section>
@@ -909,20 +1399,35 @@ async function profileView() {
   </main>`
 }
 
+/* =========================================================
+   RENDER
+========================================================= */
+
 async function render() {
+
   if (state.recovery) {
-    root.innerHTML = recoveryView()
+    root.innerHTML =
+      recoveryView()
+
     bindRecovery()
+
     return
   }
 
   if (!state.session) {
-    root.innerHTML = authView()
+    root.innerHTML =
+      authView()
+
     bindAuth()
+
     return
   }
 
-  if (state.view === 'reflection' && state.reflectionPrayer) {
+  if (
+    state.view === 'reflection' &&
+    state.reflectionPrayer
+  ) {
+
     root.innerHTML =
       shell(
         reflectionView(
@@ -935,14 +1440,47 @@ async function render() {
     return
   }
 
-  let content =
-    state.view === 'journal'
-      ? await journalView()
-      : state.view === 'prayers'
-        ? await prayersView()
-        : state.view === 'profile'
-          ? await profileView()
-          : await homeView()
+  if (
+    state.view === 'editReflection' &&
+    state.editingReflection
+  ) {
+
+    root.innerHTML =
+      shell(
+        editReflectionView(
+          state.editingReflection
+        )
+      )
+
+    bindEditReflection()
+
+    return
+  }
+
+  let content
+
+  if (state.view === 'journal') {
+    content =
+      await journalView()
+  } else if (
+    state.view === 'prayers'
+  ) {
+    content =
+      await prayersView()
+  } else if (
+    state.view === 'memories'
+  ) {
+    content =
+      await memoriesView()
+  } else if (
+    state.view === 'profile'
+  ) {
+    content =
+      await profileView()
+  } else {
+    content =
+      await homeView()
+  }
 
   root.innerHTML =
     shell(content)
@@ -950,7 +1488,12 @@ async function render() {
   bindApp()
 }
 
+/* =========================================================
+   AUTH BINDINGS
+========================================================= */
+
 function bindAuth() {
+
   if (state.recoveryMode) {
 
     const form =
@@ -978,9 +1521,13 @@ function bindAuth() {
             'recoveryMsg'
           )
 
-        if (newPassword.length < 8) {
+        if (
+          newPassword.length < 8
+        ) {
+
           msg.textContent =
             'Your password must be at least 8 characters.'
+
           return
         }
 
@@ -988,8 +1535,10 @@ function bindAuth() {
           newPassword !==
           confirmPassword
         ) {
+
           msg.textContent =
             'The passwords do not match.'
+
           return
         }
 
@@ -1000,12 +1549,15 @@ function bindAuth() {
 
           const { error } =
             await supabase.auth.updateUser({
-              password: newPassword
+              password:
+                newPassword
             })
 
           if (error) {
+
             msg.textContent =
               `Password could not be updated: ${error.message}`
+
             return
           }
 
@@ -1062,221 +1614,259 @@ function bindAuth() {
 
   document.getElementById(
     'authForm'
-  ).onsubmit = async e => {
+  ).onsubmit =
+    async e => {
 
-    e.preventDefault()
+      e.preventDefault()
 
-    const email =
-      document.getElementById(
-        'email'
-      ).value.trim()
+      const email =
+        document.getElementById(
+          'email'
+        ).value.trim()
 
-    const password =
-      document.getElementById(
-        'password'
-      ).value
+      const password =
+        document.getElementById(
+          'password'
+        ).value
 
-    const msg =
-      document.getElementById(
-        'authMsg'
-      )
-
-    msg.textContent =
-      'Please wait…'
-
-    try {
-
-      const result =
-        state.authMode === 'signup'
-          ? await supabase.auth.signUp({
-              email,
-              password
-            })
-          : await supabase.auth.signInWithPassword({
-              email,
-              password
-            })
-
-      if (result.error) {
-
-        const raw =
-          result.error.message ||
-          'Authentication failed.'
-
-        msg.textContent =
-          /invalid login credentials/i.test(raw)
-            ? 'The email or password is incorrect. Try again or use Forgot your password.'
-            : /email not confirmed/i.test(raw)
-              ? 'Please confirm your email address before signing in.'
-              : raw
-
-        return
-      }
-
-      msg.textContent =
-        state.authMode === 'signup'
-          ? 'Check your email to confirm your account.'
-          : 'Welcome back.'
-
-    } catch (error) {
-
-      msg.textContent =
-        error?.message ||
-        'Something went wrong. Please try again.'
-    }
-  }
-
-  document.getElementById(
-    'reset'
-  ).onclick = async e => {
-
-    e.preventDefault()
-
-    const input =
-      document.getElementById(
-        'email'
-      )
-
-    const msg =
-      document.getElementById(
-        'authMsg'
-      )
-
-    const email =
-      input.value.trim()
-
-    if (!email) {
-
-      msg.textContent =
-        'Enter your email address above, then click Forgot your password again.'
-
-      input.focus()
-
-      return
-    }
-
-    msg.textContent =
-      'Sending password reset email…'
-
-    try {
-
-      const result =
-        await supabase.auth.resetPasswordForEmail(
-          email,
-          {
-            redirectTo:
-              window.location.origin
-          }
+      const msg =
+        document.getElementById(
+          'authMsg'
         )
 
       msg.textContent =
-        result.error
-          ? `Password reset could not be sent: ${result.error.message}`
-          : 'Password reset instructions were sent. Check your email.'
+        'Please wait…'
 
-    } catch (error) {
+      try {
 
-      msg.textContent =
-        `Password reset could not be sent: ${
-          error?.message ||
-          'Please try again.'
-        }`
-    }
-  }
-}
+        const result =
+          state.authMode ===
+          'signup'
 
-function bindRecovery() {
-  document.getElementById(
-    'recoveryForm'
-  ).onsubmit = async e => {
+            ? await supabase.auth.signUp({
+                email,
+                password
+              })
 
-    e.preventDefault()
+            : await supabase.auth.signInWithPassword({
+                email,
+                password
+              })
 
-    const newPassword =
-      document.getElementById(
-        'newPassword'
-      ).value
+        if (result.error) {
 
-    const confirmPassword =
-      document.getElementById(
-        'confirmPassword'
-      ).value
+          const raw =
+            result.error.message ||
+            'Authentication failed.'
 
-    const msg =
-      document.getElementById(
-        'recoveryMsg'
-      )
+          msg.textContent =
+            /invalid login credentials/i.test(
+              raw
+            )
 
-    if (
-      newPassword !==
-      confirmPassword
-    ) {
-      msg.textContent =
-        'The passwords do not match.'
-      return
-    }
+              ? 'The email or password is incorrect. Try again or use Forgot your password.'
 
-    if (newPassword.length < 8) {
-      msg.textContent =
-        'Your password must be at least 8 characters.'
-      return
-    }
+              : /email not confirmed/i.test(
+                  raw
+                )
 
-    msg.textContent =
-      'Updating your password…'
+                ? 'Please confirm your email address before signing in.'
 
-    try {
+                : raw
 
-      const { error } =
-        await supabase.auth.updateUser({
-          password: newPassword
-        })
+          return
+        }
 
-      if (error) {
         msg.textContent =
-          `Password could not be updated: ${error.message}`
+          state.authMode ===
+          'signup'
+
+            ? 'Check your email to confirm your account.'
+
+            : 'Welcome back.'
+
+      } catch (error) {
+
+        msg.textContent =
+          error?.message ||
+          'Something went wrong. Please try again.'
+      }
+    }
+
+  document.getElementById(
+    'reset'
+  ).onclick =
+    async e => {
+
+      e.preventDefault()
+
+      const input =
+        document.getElementById(
+          'email'
+        )
+
+      const msg =
+        document.getElementById(
+          'authMsg'
+        )
+
+      const email =
+        input.value.trim()
+
+      if (!email) {
+
+        msg.textContent =
+          'Enter your email address above, then click Forgot your password again.'
+
+        input.focus()
+
         return
       }
 
       msg.textContent =
-        'Password updated successfully. You can now sign in.'
+        'Sending password reset email…'
 
-      setTimeout(
-        async () => {
+      try {
 
-          await supabase.auth.signOut()
+        const result =
+          await supabase.auth.resetPasswordForEmail(
+            email,
+            {
+              redirectTo:
+                window.location.origin
+            }
+          )
 
-          state.session =
-            null
+        msg.textContent =
+          result.error
 
-          state.recovery =
-            false
+            ? `Password reset could not be sent: ${result.error.message}`
 
-          state.authMode =
-            'login'
+            : 'Password reset instructions were sent. Check your email.'
 
-          await render()
+      } catch (error) {
 
-        },
-        1500
-      )
+        msg.textContent =
+          `Password reset could not be sent: ${
+            error?.message ||
+            'Please try again.'
+          }`
+      }
+    }
+}
 
-    } catch (error) {
+/* =========================================================
+   RECOVERY
+========================================================= */
+
+function bindRecovery() {
+
+  document.getElementById(
+    'recoveryForm'
+  ).onsubmit =
+    async e => {
+
+      e.preventDefault()
+
+      const newPassword =
+        document.getElementById(
+          'newPassword'
+        ).value
+
+      const confirmPassword =
+        document.getElementById(
+          'confirmPassword'
+        ).value
+
+      const msg =
+        document.getElementById(
+          'recoveryMsg'
+        )
+
+      if (
+        newPassword !==
+        confirmPassword
+      ) {
+
+        msg.textContent =
+          'The passwords do not match.'
+
+        return
+      }
+
+      if (
+        newPassword.length < 8
+      ) {
+
+        msg.textContent =
+          'Your password must be at least 8 characters.'
+
+        return
+      }
 
       msg.textContent =
-        `Password could not be updated: ${
-          error?.message ||
-          'Please try again.'
-        }`
+        'Updating your password…'
+
+      try {
+
+        const { error } =
+          await supabase.auth.updateUser({
+            password:
+              newPassword
+          })
+
+        if (error) {
+
+          msg.textContent =
+            `Password could not be updated: ${error.message}`
+
+          return
+        }
+
+        msg.textContent =
+          'Password updated successfully. You can now sign in.'
+
+        setTimeout(
+          async () => {
+
+            await supabase.auth.signOut()
+
+            state.session =
+              null
+
+            state.recovery =
+              false
+
+            state.authMode =
+              'login'
+
+            await render()
+
+          },
+          1500
+        )
+
+      } catch (error) {
+
+        msg.textContent =
+          `Password could not be updated: ${
+            error?.message ||
+            'Please try again.'
+          }`
+      }
     }
-  }
 }
+
+/* =========================================================
+   VOICE TO TEXT
+========================================================= */
 
 function startVoiceToText(
   buttonId,
   textareaId,
   statusId
 ) {
+
   const button =
     document.getElementById(
       buttonId
@@ -1306,7 +1896,8 @@ function startVoiceToText(
 
   if (!SpeechRecognition) {
 
-    button.disabled = true
+    button.disabled =
+      true
 
     status.textContent =
       'Voice typing is not supported in this browser.'
@@ -1328,6 +1919,7 @@ function startVoiceToText(
 
   recognition.onstart =
     () => {
+
       button.textContent =
         '🎙 Listening…'
 
@@ -1361,8 +1953,11 @@ function startVoiceToText(
     event => {
 
       status.textContent =
-        event.error === 'not-allowed'
+        event.error ===
+        'not-allowed'
+
           ? 'Microphone permission was denied.'
+
           : 'Voice typing could not start.'
     }
 
@@ -1376,6 +1971,7 @@ function startVoiceToText(
         status.textContent ===
         'Speak naturally.'
       ) {
+
         status.textContent =
           'Voice entry complete.'
       }
@@ -1390,6 +1986,10 @@ function startVoiceToText(
       recognition.start()
     }
 }
+
+/* =========================================================
+   APP BINDINGS
+========================================================= */
 
 function bindApp() {
 
@@ -1425,9 +2025,17 @@ function bindApp() {
         state.view =
           'home'
 
+        state.reflectionPrayer =
+          null
+
+        state.editingReflection =
+          null
+
         render()
       }
     )
+
+  /* JOURNAL */
 
   document
     .getElementById(
@@ -1479,6 +2087,8 @@ function bindApp() {
         }
       }
     )
+
+  /* PRAYER */
 
   document
     .getElementById(
@@ -1537,6 +2147,8 @@ function bindApp() {
         }
       }
     )
+
+  /* ANSWER PRAYER */
 
   document
     .querySelectorAll(
@@ -1600,6 +2212,8 @@ function bindApp() {
         }
     })
 
+  /* OPEN REFLECTION */
+
   document
     .querySelectorAll(
       '[data-reflect]'
@@ -1646,6 +2260,66 @@ function bindApp() {
         }
     })
 
+  /* OPEN MEMORY EDIT */
+
+  document
+    .querySelectorAll(
+      '[data-edit-memory]'
+    )
+    .forEach(button => {
+
+      button.onclick =
+        async () => {
+
+          const reflectionId =
+            button.dataset.editMemory
+
+          const {
+            data: reflection,
+            error
+          } =
+            await supabase
+              .from(
+                'prayer_reflections'
+              )
+              .select(`
+                *,
+                prayer_requests (
+                  title,
+                  details,
+                  answer_note,
+                  answered_at
+                )
+              `)
+              .eq(
+                'id',
+                reflectionId
+              )
+              .eq(
+                'user_id',
+                state.session.user.id
+              )
+              .single()
+
+          if (error) {
+
+            alert(
+              `Unable to open this reflection: ${error.message}`
+            )
+
+            return
+          }
+
+          state.editingReflection =
+            reflection
+
+          state.view =
+            'editReflection'
+
+          render()
+        }
+    })
+
   startVoiceToText(
     'journalVoice',
     'jbody',
@@ -1658,6 +2332,10 @@ function bindApp() {
     'prayerVoiceStatus'
   )
 }
+
+/* =========================================================
+   REFLECTION BINDINGS
+========================================================= */
 
 function bindReflection() {
 
@@ -1726,40 +2404,96 @@ function bindReflection() {
         const prompt =
           `What do you want to remember about how God answered "${prayer.title}"?`
 
-        const { error } =
+        const {
+          data: existingReflection
+        } =
           await supabase
             .from(
               'prayer_reflections'
             )
-            .insert({
+            .select('*')
+            .eq(
+              'prayer_request_id',
+              prayer.id
+            )
+            .eq(
+              'user_id',
+              state.session.user.id
+            )
+            .order(
+              'created_at',
+              {
+                ascending: false
+              }
+            )
+            .limit(1)
+            .maybeSingle()
 
-              user_id:
-                state.session.user.id,
+        let result
 
-              prayer_request_id:
-                prayer.id,
+        if (existingReflection) {
 
-              reflection_prompt:
-                prompt,
+          result =
+            await supabase
+              .from(
+                'prayer_reflections'
+              )
+              .update({
 
-              reflection_text:
-                text,
+                reflection_prompt:
+                  prompt,
 
-              save_as_memory:
-                saveAsMemory
-            })
+                reflection_text:
+                  text,
 
-        if (error) {
+                save_as_memory:
+                  saveAsMemory
+
+              })
+              .eq(
+                'id',
+                existingReflection.id
+              )
+
+        } else {
+
+          result =
+            await supabase
+              .from(
+                'prayer_reflections'
+              )
+              .insert({
+
+                user_id:
+                  state.session.user.id,
+
+                prayer_request_id:
+                  prayer.id,
+
+                reflection_prompt:
+                  prompt,
+
+                reflection_text:
+                  text,
+
+                save_as_memory:
+                  saveAsMemory
+              })
+        }
+
+        if (result.error) {
 
           msg.textContent =
-            `Your reflection could not be saved: ${error.message}`
+            `Your reflection could not be saved: ${result.error.message}`
 
           return
         }
 
         msg.textContent =
           saveAsMemory
-            ? 'Your reflection was saved as a memory.'
+
+            ? 'Your reflection was saved to your Memory Bank.'
+
             : 'Your reflection was saved.'
 
         setTimeout(
@@ -1780,8 +2514,140 @@ function bindReflection() {
     )
 }
 
+/* =========================================================
+   EDIT REFLECTION BINDINGS
+========================================================= */
+
+function bindEditReflection() {
+
+  document
+    .getElementById(
+      'cancelEditReflection'
+    )
+    ?.addEventListener(
+      'click',
+      () => {
+
+        state.editingReflection =
+          null
+
+        state.view =
+          'memories'
+
+        render()
+      }
+    )
+
+  document
+    .getElementById(
+      'editReflectionForm'
+    )
+    ?.addEventListener(
+      'submit',
+      async e => {
+
+        e.preventDefault()
+
+        const text =
+          document
+            .getElementById(
+              'editReflectionText'
+            )
+            .value
+            .trim()
+
+        const saveAsMemory =
+          document
+            .getElementById(
+              'editSaveMemory'
+            )
+            .checked
+
+        const msg =
+          document.getElementById(
+            'editReflectionMsg'
+          )
+
+        if (!text) {
+
+          msg.textContent =
+            'Your reflection cannot be empty.'
+
+          return
+        }
+
+        msg.textContent =
+          'Saving your changes…'
+
+        const {
+          error
+        } =
+          await supabase
+            .from(
+              'prayer_reflections'
+            )
+            .update({
+
+              reflection_text:
+                text,
+
+              save_as_memory:
+                saveAsMemory
+
+            })
+            .eq(
+              'id',
+              state.editingReflection.id
+            )
+            .eq(
+              'user_id',
+              state.session.user.id
+            )
+
+        if (error) {
+
+          msg.textContent =
+            `Your reflection could not be updated: ${error.message}`
+
+          return
+        }
+
+        msg.textContent =
+          saveAsMemory
+
+            ? 'Your reflection was updated and remains in your Memory Bank.'
+
+            : 'Your reflection was updated.'
+
+        setTimeout(
+          () => {
+
+            state.editingReflection =
+              null
+
+            state.view =
+              saveAsMemory
+                ? 'memories'
+                : 'prayers'
+
+            render()
+
+          },
+          900
+        )
+      }
+    )
+}
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
 supabase.auth.onAuthStateChange(
-  async (event, session) => {
+  async (
+    event,
+    session
+  ) => {
 
     console.log(
       'AUTH EVENT:',
@@ -1819,6 +2685,9 @@ supabase.auth.onAuthStateChange(
         'home'
 
       state.reflectionPrayer =
+        null
+
+      state.editingReflection =
         null
     }
 
