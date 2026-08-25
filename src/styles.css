@@ -1,17 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
 
 :root {
   --cream: #fbf8f3;
   --paper: #fffdf9;
-  --paper-soft: #f8f3ec;
+  --paper-soft: #f7f2ea;
+
   --brown: #6f5645;
   --brown2: #8a705d;
+  --brown-dark: #514033;
+
   --sage: #a5ae96;
   --sage-soft: #e8ede0;
+
   --ink: #403a35;
   --muted: #7f746b;
+
   --line: #e5dbd0;
-  --shadow: rgba(80, 60, 40, .07);
+  --line-soft: #eee5db;
+
+  --danger: #9b6b61;
+
+  --shadow:
+    0 14px 45px rgba(80, 60, 40, 0.07);
+
+  --shadow-soft:
+    0 7px 25px rgba(80, 60, 40, 0.055);
 }
 
 * {
@@ -19,15 +32,17 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
+
   background:
     radial-gradient(
       circle at top left,
-      rgba(255,255,255,.7),
+      rgba(255,255,255,.75),
       transparent 35%
     ),
     linear-gradient(
@@ -35,8 +50,14 @@ body {
       #fbf8f3,
       #f3eee6
     );
+
   color: var(--ink);
-  font-family: 'DM Sans', sans-serif;
+
+  font-family:
+    'DM Sans',
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -47,27 +68,25 @@ select {
 }
 
 button {
-  transition:
-    transform .15s ease,
-    box-shadow .15s ease,
-    background .15s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-button:hover {
-  transform: translateY(-1px);
-}
+/* =========================================================
+   APP
+========================================================= */
 
 .app-shell {
   min-height: 100vh;
   padding-bottom: 92px;
 }
 
-/* ============================================================
+/* =========================================================
    HEADER
-============================================================ */
+========================================================= */
 
 header {
   height: 72px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -79,9 +98,12 @@ header {
     1px solid var(--line);
 
   background:
-    rgba(255,253,249,.88);
+    rgba(255,253,249,.86);
 
   backdrop-filter:
+    blur(14px);
+
+  -webkit-backdrop-filter:
     blur(14px);
 
   position: sticky;
@@ -90,84 +112,127 @@ header {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--brown);
+
   font-family:
     'Playfair Display',
     serif;
 
   font-size: 23px;
-
-  color:
-    var(--brown);
-
-  display:
-    flex;
-
-  gap: 8px;
-
-  align-items:
-    center;
+  font-weight: 600;
 }
 
 .leaf {
-  font-size: 24px;
-}
-
-.ghost,
-.link {
-  border: 0;
-  background: none;
-  color: var(--brown2);
-  cursor: pointer;
+  font-size: 25px;
 }
 
 .ghost {
-  padding: 8px 12px;
-  border-radius: 10px;
+  border: 0;
+  background: transparent;
+
+  color: var(--brown2);
+
+  cursor: pointer;
+
+  padding: 8px 4px;
+
+  transition:
+    color .2s ease,
+    transform .2s ease;
 }
 
 .ghost:hover {
-  background: var(--paper-soft);
+  color: var(--brown-dark);
+  transform: translateY(-1px);
 }
 
-/* ============================================================
-   AUTH
-============================================================ */
+/* =========================================================
+   MAIN
+========================================================= */
 
-.auth {
-  max-width: 480px;
-  margin: 10vh auto;
-  padding: 24px;
+main {
+  width: 100%;
+  max-width: 1000px;
+
+  margin: 0 auto;
+
+  padding:
+    42px 6vw;
 }
 
-.mark {
-  text-align: center;
+.welcome {
+  padding:
+    20px 0 30px;
+}
+
+.welcome h2,
+.section-title h2 {
+  margin:
+    5px 0 10px;
+
   color: var(--brown);
-  font-size: 54px;
-}
 
-.auth h1 {
-  text-align: center;
-  font:
-    600 42px
+  font-family:
     'Playfair Display',
     serif;
 
-  color: var(--brown);
-  margin: 0;
+  font-size: 38px;
+  line-height: 1.15;
+  font-weight: 600;
 }
 
-.tag {
-  text-align: center;
-  line-height: 1.6;
+.section-title {
+  margin-bottom: 25px;
+}
+
+.section-title p {
+  line-height: 1.65;
+}
+
+/* =========================================================
+   TYPE
+========================================================= */
+
+.eyebrow {
+  margin:
+    0 0 8px;
+
+  color: var(--brown2);
+
+  font-size: 11px;
+  line-height: 1.4;
+
+  letter-spacing: 2px;
+
+  font-weight: 700;
+}
+
+.muted {
   color: var(--muted);
+  line-height: 1.65;
 }
 
-/* ============================================================
+.msg {
+  min-height: 20px;
+  margin-top: 12px;
+
+  color: var(--muted);
+
+  line-height: 1.5;
+}
+
+/* =========================================================
    CARDS
-============================================================ */
+========================================================= */
 
 .card,
 .scripture {
+  margin-bottom: 20px;
+
   background:
     rgba(255,253,249,.92);
 
@@ -178,53 +243,87 @@ header {
     24px;
 
   padding:
-    24px;
+    25px;
 
   box-shadow:
-    0 12px 40px
     var(--shadow);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
 }
 
-.card + .card {
+.card h3 {
+  margin:
+    6px 0 12px;
+
+  color: var(--brown);
+
+  line-height: 1.45;
+}
+
+.grid {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 18px;
+
   margin-top: 18px;
 }
 
-/* ============================================================
+/* =========================================================
+   SCRIPTURE
+========================================================= */
+
+.scripture {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,253,249,.97),
+      rgba(248,244,237,.94)
+    );
+}
+
+.scripture blockquote {
+  margin:
+    12px 0 15px;
+
+  color: var(--brown);
+
+  font-family:
+    'Playfair Display',
+    serif;
+
+  font-size: 27px;
+  line-height: 1.45;
+
+  font-weight: 500;
+}
+
+/* =========================================================
    FORMS
-============================================================ */
-
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 22px;
-}
-
-.tabs button {
-  flex: 1;
-  padding: 12px;
-  border: 0;
-  background: #eee7de;
-  border-radius: 12px;
-  color: var(--brown2);
-  cursor: pointer;
-}
-
-.tabs .active {
-  background: var(--brown);
-  color: white;
-}
+========================================================= */
 
 label {
   display: block;
+
+  margin:
+    16px 0;
+
+  color: var(--brown-dark);
+
   font-size: 13px;
-  margin: 14px 0;
+  font-weight: 500;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  margin-top: 7px;
+
+  margin-top: 8px;
 
   border:
     1px solid var(--line);
@@ -233,174 +332,297 @@ select {
     14px;
 
   padding:
-    13px;
+    13px 14px;
 
   background:
-    #fff;
+    rgba(255,255,255,.92);
 
-  color:
-    var(--ink);
+  color: var(--ink);
 
-  outline:
-    none;
+  outline: none;
 
   transition:
-    border .15s ease,
-    box-shadow .15s ease;
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
   border-color:
-    var(--brown2);
-
-  box-shadow:
-    0 0 0 3px
-    rgba(138,112,93,.10);
-}
-
-textarea {
-  resize: vertical;
-}
-
-.primary,
-.secondary {
-  border: 0;
-  border-radius: 13px;
-  padding: 13px 18px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.primary {
-  background: var(--brown);
-  color: white;
-  box-shadow:
-    0 6px 18px
-    rgba(111,86,69,.14);
-}
-
-.primary:hover {
-  box-shadow:
-    0 9px 24px
-    rgba(111,86,69,.20);
-}
-
-.secondary {
-  background: var(--sage-soft);
-  color: var(--brown);
-}
-
-.small {
-  border:
-    1px solid var(--line);
+    rgba(111,86,69,.5);
 
   background:
     white;
 
+  box-shadow:
+    0 0 0 4px
+    rgba(111,86,69,.07);
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.65;
+}
+
+::placeholder {
+  color: #a79c93;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary,
+.secondary,
+.small {
+  border: 0;
+
   border-radius:
-    9px;
+    13px;
+
+  cursor: pointer;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease;
+}
+
+.primary {
+  background:
+    var(--brown);
+
+  color: white;
 
   padding:
-    6px 10px;
+    13px 19px;
+
+  font-weight: 600;
+
+  box-shadow:
+    0 5px 15px
+    rgba(111,86,69,.15);
+}
+
+.primary:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 8px 20px
+    rgba(111,86,69,.2);
+}
+
+.secondary {
+  background:
+    var(--sage-soft);
+
+  color:
+    #52604a;
+
+  padding:
+    12px 17px;
+
+  font-weight: 600;
+}
+
+.secondary:hover {
+  transform:
+    translateY(-1px);
+
+  background:
+    #e0e7d6;
+}
+
+.small {
+  padding:
+    7px 11px;
+
+  background:
+    white;
+
+  border:
+    1px solid var(--line);
+
+  color:
+    var(--brown);
+
+  font-size:
+    12px;
+}
+
+.link {
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--brown2);
+
+  cursor: pointer;
+
+  padding:
+    8px 0;
+
+  font-size:
+    13px;
+}
+
+.link:hover {
+  color:
+    var(--brown-dark);
+}
+
+.danger-link {
+  border: 0;
+  background: transparent;
+
+  color: var(--danger);
+
+  cursor: pointer;
+
+  padding: 8px 0;
+
+  font-size: 13px;
+}
+
+.danger-link:hover {
+  text-decoration:
+    underline;
+}
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+.auth {
+  max-width:
+    480px;
+
+  margin:
+    10vh auto;
+
+  padding:
+    24px;
+}
+
+.mark {
+  text-align:
+    center;
+
+  color:
+    var(--brown);
+
+  font-size:
+    54px;
+}
+
+.auth h1 {
+  margin:
+    0;
+
+  text-align:
+    center;
+
+  color:
+    var(--brown);
+
+  font-family:
+    'Playfair Display',
+    serif;
+
+  font-size:
+    42px;
+
+  font-weight:
+    600;
+}
+
+.tag {
+  text-align:
+    center;
+
+  line-height:
+    1.6;
+}
+
+/* =========================================================
+   TABS
+========================================================= */
+
+.tabs {
+  display:
+    flex;
+
+  gap:
+    8px;
+
+  margin-bottom:
+    22px;
+}
+
+.tabs button {
+  flex:
+    1;
+
+  padding:
+    12px;
+
+  border:
+    0;
+
+  background:
+    #eee7de;
+
+  border-radius:
+    12px;
+
+  color:
+    var(--brown2);
 
   cursor:
     pointer;
 }
 
-.msg {
-  min-height: 20px;
-  color: var(--muted);
-}
-
-.muted {
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-/* ============================================================
-   MAIN
-============================================================ */
-
-main {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 38px 6vw;
-}
-
-.welcome {
-  padding: 20px 0 28px;
-}
-
-.welcome h2,
-.section-title h2,
-.memory-header h2 {
-  font:
-    600 38px
-    'Playfair Display',
-    serif;
-
-  color:
+.tabs .active {
+  background:
     var(--brown);
 
-  margin:
-    5px 0;
-}
-
-.section-title {
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--brown2);
-  font-weight: 600;
-}
-
-/* ============================================================
-   SCRIPTURE
-============================================================ */
-
-.scripture {
-  margin-bottom: 22px;
-}
-
-.scripture blockquote {
-  font:
-    500 27px/1.45
-    'Playfair Display',
-    serif;
-
   color:
-    var(--brown);
-
-  margin:
-    10px 0 14px;
+    white;
 }
 
-/* ============================================================
-   GRID
-============================================================ */
+/* =========================================================
+   VOICE
+========================================================= */
 
-.grid {
+.voice-row {
   display:
-    grid;
+    flex;
 
-  grid-template-columns:
-    1fr 1fr;
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
 
   gap:
-    18px;
+    12px;
 
-  margin-top:
-    18px;
+  margin:
+    4px 0 18px;
 }
 
-/* ============================================================
+.voice-row .muted {
+  font-size:
+    12px;
+}
+
+/* =========================================================
    LISTS
-============================================================ */
+========================================================= */
 
 .list {
   display:
@@ -415,16 +637,19 @@ main {
 
 .entry {
   background:
-    rgba(255,253,249,.85);
+    rgba(255,253,249,.88);
 
   border:
     1px solid var(--line);
 
   border-radius:
-    18px;
+    19px;
 
   padding:
-    18px;
+    19px;
+
+  box-shadow:
+    var(--shadow-soft);
 }
 
 .entry h3 {
@@ -437,18 +662,18 @@ main {
 
 .entry p {
   line-height:
-    1.6;
+    1.65;
 }
 
 .row {
   display:
     flex;
 
-  justify-content:
-    space-between;
-
   align-items:
     center;
+
+  justify-content:
+    space-between;
 
   gap:
     12px;
@@ -458,14 +683,14 @@ main {
   display:
     inline-block;
 
+  margin-right:
+    5px;
+
   font-size:
     11px;
 
   padding:
     5px 9px;
-
-  margin-right:
-    5px;
 
   border-radius:
     999px;
@@ -482,11 +707,21 @@ main {
     #52604a;
 }
 
-/* ============================================================
+/* =========================================================
    ANSWERED PRAYER
-============================================================ */
+========================================================= */
 
-.answer-block,
+.answer-block {
+  margin-top:
+    18px;
+
+  padding-top:
+    16px;
+
+  border-top:
+    1px solid var(--line-soft);
+}
+
 .answer-highlight {
   margin-top:
     18px;
@@ -494,47 +729,42 @@ main {
   padding:
     17px;
 
-  background:
-    var(--paper-soft);
-
   border-radius:
-    16px;
+    17px;
 
-  border:
-    1px solid var(--line);
+  background:
+    var(--sage-soft);
 }
 
-.answer-block p {
+.answer-actions {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    13px;
+
   margin-top:
-    6px;
+    12px;
 }
 
-/* ============================================================
-   REFLECTION PROMPT
-============================================================ */
+/* =========================================================
+   REFLECTION
+========================================================= */
 
 .reflection-prompt-card {
   background:
     linear-gradient(
-      135deg,
-      rgba(255,253,249,.96),
-      rgba(242,238,229,.92)
+      145deg,
+      #fffdf9,
+      #f5f1e9
     );
 }
-
-.reflection-prompt-card h3 {
-  font:
-    500 22px/1.5
-    'Playfair Display',
-    serif;
-
-  color:
-    var(--brown);
-}
-
-/* ============================================================
-   MEMORY CHOICE
-============================================================ */
 
 .memory-choice {
   display:
@@ -544,22 +774,22 @@ main {
     flex-start;
 
   gap:
-    13px;
+    12px;
+
+  margin:
+    22px 0;
 
   padding:
     15px;
-
-  margin:
-    20px 0;
-
-  background:
-    var(--paper-soft);
 
   border:
     1px solid var(--line);
 
   border-radius:
-    15px;
+    16px;
+
+  background:
+    rgba(250,247,241,.72);
 
   cursor:
     pointer;
@@ -567,16 +797,16 @@ main {
 
 .memory-choice input {
   width:
-    19px;
+    18px;
 
   height:
-    19px;
+    18px;
+
+  flex:
+    0 0 auto;
 
   margin:
     2px 0 0;
-
-  accent-color:
-    var(--brown);
 }
 
 .memory-choice span {
@@ -587,7 +817,12 @@ main {
     column;
 
   gap:
-    4px;
+    3px;
+}
+
+.memory-choice strong {
+  color:
+    var(--brown);
 }
 
 .memory-choice small {
@@ -596,120 +831,23 @@ main {
 
   line-height:
     1.5;
-}
 
-/* ============================================================
-   VOICE
-============================================================ */
-
-.voice-row {
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  gap:
-    12px;
-
-  margin:
-    4px 0 18px;
-}
-
-.voice-row .secondary {
-  white-space:
-    nowrap;
-}
-
-.voice-row .muted {
   font-size:
     12px;
 }
 
-/* ============================================================
+/* =========================================================
    MEMORY BANK
-============================================================ */
+========================================================= */
 
-.memory-header {
-  display:
-    flex;
-
-  justify-content:
-    space-between;
-
-  align-items:
-    flex-end;
-
-  gap:
-    30px;
-
+.memory-heading {
   margin-bottom:
-    28px;
+    30px;
 }
 
-.memory-header > div:first-child {
-  max-width:
-    700px;
-}
-
-.memory-header p {
-  line-height:
-    1.65;
-
-  color:
-    var(--muted);
-}
-
-.memory-count {
-  min-width:
-    90px;
-
-  height:
-    90px;
-
-  border-radius:
-    50%;
-
-  background:
-    var(--sage-soft);
-
-  display:
-    flex;
-
-  flex-direction:
-    column;
-
-  justify-content:
-    center;
-
-  align-items:
-    center;
-
-  color:
-    var(--brown);
-}
-
-.memory-count span {
-  font:
-    600 28px
-    'Playfair Display',
-    serif;
-}
-
-.memory-count small {
-  font-size:
-    11px;
-
-  color:
-    var(--brown2);
-}
-
-.memory-grid {
+.memory-list {
   display:
     grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
 
   gap:
     18px;
@@ -719,21 +857,24 @@ main {
   position:
     relative;
 
-  background:
-    rgba(255,253,249,.94);
+  padding:
+    25px;
 
   border:
     1px solid var(--line);
 
   border-radius:
-    22px;
+    24px;
 
-  padding:
-    22px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,253,249,.98),
+      rgba(248,244,237,.93)
+    );
 
   box-shadow:
-    0 10px 30px
-    rgba(80,60,40,.055);
+    var(--shadow);
 
   overflow:
     hidden;
@@ -752,205 +893,52 @@ main {
   left:
     0;
 
-  right:
-    0;
+  width:
+    5px;
 
   height:
-    4px;
+    100%;
 
   background:
     var(--sage);
 }
 
-.memory-card.lesson::before {
-  background:
-    var(--brown2);
-}
-
-.memory-card-top {
+.memory-top {
   display:
     flex;
-
-  justify-content:
-    space-between;
 
   align-items:
     center;
 
   gap:
-    10px;
+    12px;
 
   margin-bottom:
-    15px;
+    14px;
 }
 
-.memory-type {
-  font-size:
-    11px;
-
-  font-weight:
-    600;
-
-  letter-spacing:
-    .5px;
-
-  color:
-    var(--brown);
-}
-
-.memory-date {
-  font-size:
-    11px;
-
-  color:
-    var(--muted);
-}
-
-.memory-card h3 {
-  font:
-    600 23px
-    'Playfair Display',
-    serif;
-
-  color:
-    var(--brown);
-
-  margin:
-    0 0 14px;
-}
-
-.memory-text {
-  font-size:
-    15px;
-
-  line-height:
-    1.75;
-
-  color:
-    var(--ink);
-
-  white-space:
-    pre-wrap;
-}
-
-.memory-prayer {
-  margin-top:
-    20px;
-
-  padding-top:
-    17px;
-
-  border-top:
-    1px solid var(--line);
-
+.memory-symbol,
+.empty-symbol {
   display:
     flex;
 
-  flex-direction:
-    column;
-
-  gap:
-    5px;
-}
-
-.memory-prayer strong {
-  color:
-    var(--brown);
-}
-
-.memory-prayer p {
-  margin:
-    4px 0 0;
-
-  color:
-    var(--muted);
-
-  line-height:
-    1.55;
-
-  font-size:
-    13px;
-}
-
-.memory-actions {
-  display:
-    flex;
-
-  gap:
-    9px;
-
-  margin-top:
-    20px;
-}
-
-.memory-actions .secondary {
-  padding:
-    9px 13px;
-
-  font-size:
-    12px;
-}
-
-.memory-delete {
-  border:
-    1px solid var(--line);
-
-  background:
-    transparent;
-
-  color:
-    var(--muted);
-
-  border-radius:
-    12px;
-
-  padding:
-    9px 13px;
-
-  cursor:
-    pointer;
-
-  font-size:
-    12px;
-}
-
-.memory-delete:hover {
-  background:
-    #f5ebe6;
-
-  color:
-    #7a5147;
-}
-
-.empty-memory {
-  text-align:
+  align-items:
     center;
 
-  padding:
-    55px 30px;
-}
+  justify-content:
+    center;
 
-.empty-memory-icon {
   width:
-    62px;
+    40px;
 
   height:
-    62px;
+    40px;
 
-  margin:
-    0 auto 18px;
+  flex:
+    0 0 auto;
 
   border-radius:
     50%;
-
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    center;
 
   background:
     var(--sage-soft);
@@ -959,46 +947,210 @@ main {
     var(--brown);
 
   font-size:
-    25px;
+    18px;
 }
 
-.empty-memory h3 {
-  font:
-    600 25px
-    'Playfair Display',
-    serif;
+.memory-date {
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+}
+
+.memory-card h3 {
+  margin:
+    5px 0 13px;
 
   color:
     var(--brown);
 
-  margin:
-    0 0 10px;
-}
+  font-family:
+    'Playfair Display',
+    serif;
 
-.empty-memory p {
-  max-width:
-    520px;
-
-  margin:
-    0 auto 22px;
+  font-size:
+    25px;
 
   line-height:
-    1.7;
+    1.3;
+}
+
+.memory-source {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    5px;
+
+  align-items:
+    baseline;
+
+  padding:
+    11px 13px;
+
+  margin:
+    0 0 17px;
+
+  border-radius:
+    12px;
+
+  background:
+    rgba(232,237,224,.6);
+
+  color:
+    #52604a;
+
+  font-size:
+    12px;
+}
+
+.memory-source span {
+  opacity:
+    .75;
+}
+
+.memory-text {
+  color:
+    var(--ink);
+
+  line-height:
+    1.75;
+
+  white-space:
+    pre-wrap;
+
+  margin:
+    0 0 20px;
+}
+
+.memory-actions {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    14px;
+
+  padding-top:
+    15px;
+
+  border-top:
+    1px solid var(--line-soft);
+}
+
+.memory-empty {
+  text-align:
+    center;
+
+  padding:
+    45px 28px;
+}
+
+.empty-symbol {
+  width:
+    56px;
+
+  height:
+    56px;
+
+  margin:
+    0 auto 18px;
+
+  font-size:
+    24px;
+}
+
+.memory-empty h3 {
+  max-width:
+    540px;
+
+  margin:
+    8px auto 12px;
+
+  font-family:
+    'Playfair Display',
+    serif;
+
+  font-size:
+    27px;
+}
+
+.memory-empty .muted {
+  max-width:
+    560px;
+
+  margin:
+    0 auto 24px;
+}
+
+/* =========================================================
+   MEMORY EDIT
+========================================================= */
+
+.memory-edit-note {
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  gap:
+    12px;
+
+  margin:
+    20px 0;
+
+  padding:
+    15px;
+
+  border-radius:
+    16px;
+
+  background:
+    #f3eee6;
+}
+
+.memory-edit-note .memory-symbol {
+  width:
+    34px;
+
+  height:
+    34px;
+
+  font-size:
+    15px;
+}
+
+.memory-edit-note p {
+  margin:
+    4px 0;
 
   color:
     var(--muted);
+
+  font-size:
+    13px;
+
+  line-height:
+    1.6;
 }
 
-/* ============================================================
+/* =========================================================
    BOTTOM NAV
-============================================================ */
+========================================================= */
 
 .bottom-nav {
   position:
     fixed;
-
-  bottom:
-    0;
 
   left:
     0;
@@ -1006,11 +1158,11 @@ main {
   right:
     0;
 
-  background:
-    rgba(255,253,249,.95);
+  bottom:
+    0;
 
-  border-top:
-    1px solid var(--line);
+  z-index:
+    30;
 
   display:
     flex;
@@ -1022,62 +1174,88 @@ main {
     4px;
 
   padding:
-    10px;
+    9px 10px
+    calc(9px + env(safe-area-inset-bottom));
 
-  z-index:
-    30;
+  background:
+    rgba(255,253,249,.95);
+
+  border-top:
+    1px solid var(--line);
 
   backdrop-filter:
-    blur(14px);
+    blur(15px);
+
+  -webkit-backdrop-filter:
+    blur(15px);
 }
 
 .bottom-nav button {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  gap:
+    3px;
+
+  min-width:
+    70px;
+
   border:
     0;
 
   background:
     transparent;
 
-  padding:
-    10px 15px;
-
   color:
     var(--brown2);
 
-  cursor:
-    pointer;
+  padding:
+    7px 10px;
 
   border-radius:
     12px;
 
+  cursor:
+    pointer;
+
   font-size:
-    13px;
+    11px;
 }
 
 .bottom-nav button:hover {
   background:
-    var(--paper-soft);
+    #f5efe7;
 }
 
-/* ============================================================
+.nav-icon {
+  font-size:
+    17px;
+
+  line-height:
+    1;
+}
+
+/* =========================================================
    RESPONSIVE
-============================================================ */
+========================================================= */
 
-@media (max-width: 800px) {
+@media (max-width: 760px) {
 
-  .memory-grid {
-    grid-template-columns:
-      1fr;
+  header {
+    padding:
+      0 5vw;
   }
 
-  .memory-header {
-    align-items:
-      flex-start;
+  main {
+    padding:
+      32px 5vw;
   }
-
-}
-
-@media (max-width: 700px) {
 
   .grid {
     grid-template-columns:
@@ -1085,96 +1263,64 @@ main {
   }
 
   .welcome h2,
-  .section-title h2,
-  .memory-header h2 {
+  .section-title h2 {
     font-size:
       32px;
   }
 
-  .memory-header {
-    flex-direction:
-      column;
-
-    gap:
-      18px;
+  .scripture blockquote {
+    font-size:
+      23px;
   }
 
-  .memory-count {
-    width:
-      76px;
-
-    height:
-      76px;
-
-    min-width:
-      76px;
-  }
-
-  .memory-count span {
+  .memory-card h3 {
     font-size:
       23px;
   }
 
   .bottom-nav {
-    gap:
-      0;
-
     justify-content:
       space-around;
   }
 
   .bottom-nav button {
-    padding:
-      10px 7px;
+    min-width:
+      0;
 
-    font-size:
-      11px;
+    flex:
+      1;
+
+    padding-left:
+      4px;
+
+    padding-right:
+      4px;
   }
-
-  main {
-    padding:
-      30px 5vw;
-  }
-
 }
 
 @media (max-width: 480px) {
 
-  header {
-    padding:
-      0 5vw;
-  }
+  .card,
+  .scripture,
+  .memory-card {
+    border-radius:
+      20px;
 
-  .brand {
-    font-size:
+    padding:
       20px;
   }
 
-  .ghost {
+  .auth {
+    margin-top:
+      6vh;
+
+    padding:
+      18px;
+  }
+
+  .auth h1 {
     font-size:
-      12px;
-  }
-
-  .card,
-  .scripture {
-    padding:
-      19px;
-  }
-
-  .memory-card {
-    padding:
-      19px;
-  }
-
-  .memory-card-top {
-    align-items:
-      flex-start;
-
-    flex-direction:
-      column;
-
-    gap:
-      5px;
+      37px;
   }
 
   .voice-row {
@@ -1185,9 +1331,19 @@ main {
       column;
   }
 
-  .voice-row .secondary {
-    width:
-      100%;
+  .answer-actions {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
   }
 
+  .memory-actions {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
 }
