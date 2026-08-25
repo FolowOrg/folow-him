@@ -333,78 +333,284 @@ async function homeView() {
 
   </main>`
 }
+function formatJournalDate(dateValue) {
+  if (!dateValue) return ''
+
+  const date = new Date(dateValue + 'T00:00:00')
+
+  if (Number.isNaN(date.getTime())) {
+    return esc(dateValue)
+  }
+
+  return date.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  })
+}
 
 async function journalView() {
   const { data: entries = [] } = await supabase
     .from('journal_entries')
     .select('*')
     .order('entry_date', { ascending: false })
-    .limit(30)
+    .limit(100)
 
-  return `<main>
+  return `<main class="journal-page">
 
-    <div class="section-title">
-      <p class="eyebrow">JOURNAL</p>
-      <h2>Your quiet place.</h2>
+    <section class="journal-hero">
+
+      <div class="journal-topline">
+        <span class="brand">
+          <span class="leaf">❧</span>
+          <span>Folow Him</span>
+        </span>
+
+        <button class="profile-circle" data-view="profile" aria-label="Profile">
+          ◯
+        </button>
+      </div>
+
+      <div class="journal-heading">
+        <h1>My Journal</h1>
+
+        <p class="journal-script">
+          Your quiet place.
+        </p>
+
+        <p class="journal-intent">
+          COME AWAY. &nbsp; BE STILL. &nbsp; REMEMBER.
+        </p>
+      </div>
+
+      <button
+        class="journal-write-button"
+        id="openJournalComposer"
+      >
+        <span>✎</span>
+        Write New Entry
+      </button>
+
+    </section>
+
+
+    <section class="journal-tools">
+
+      <div class="journal-search">
+
+        <span class="search-icon">⌕</span>
+
+        <input
+          id="journalSearch"
+          type="search"
+          placeholder="Search journal..."
+          autocomplete="off"
+        >
+
+      </div>
+
+      <button
+        class="journal-filter-button"
+        id="journalFilterToggle"
+        aria-label="Filter journal"
+      >
+        ☷
+      </button>
+
+    </section>
+
+
+    <div class="journal-filters" id="journalFilters">
+
+      <button
+        class="journal-filter active"
+        data-journal-filter="all"
+      >
+        All
+      </button>
+
+      <button
+        class="journal-filter"
+        data-journal-filter="week"
+      >
+        This Week
+      </button>
+
+      <button
+        class="journal-filter"
+        data-journal-filter="month"
+      >
+        This Month
+      </button>
+
     </div>
 
-    <section class="card">
+
+    <section
+      class="journal-composer card"
+      id="journalComposer"
+      hidden
+    >
+
+      <div class="composer-heading">
+        <div>
+          <p class="eyebrow">NEW ENTRY</p>
+          <h2>What's on your heart?</h2>
+        </div>
+
+        <button
+          type="button"
+          class="composer-close"
+          id="closeJournalComposer"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
 
       <form id="journalForm">
 
         <label>
           Title
+
           <input
             id="jtitle"
-            placeholder="What is on your heart?"
+            placeholder="Give this moment a name..."
+            autocomplete="off"
           >
         </label>
 
-        <label>
+
+        <label class="journal-body-label">
           Prayer / reflection
-          <textarea
-            id="jbody"
-            rows="6"
-            required
-            placeholder="Write freely..."
-          ></textarea>
+
+          <div class="voice-field">
+
+            <textarea
+              id="jbody"
+              rows="8"
+              required
+              placeholder="Write freely. Tell Him what's on your heart..."
+            ></textarea>
+
+            <button
+              type="button"
+              class="voice-button"
+              id="journalVoiceButton"
+              title="Use voice to text"
+            >
+              🎙
+              <span>Speak</span>
+            </button>
+
+          </div>
+
+          <span
+            class="voice-status"
+            id="journalVoiceStatus"
+            aria-live="polite"
+          ></span>
+
         </label>
 
-        <button class="primary" type="submit">
-          Save entry
-        </button>
 
-        <p id="journalMsg" class="msg"></p>
+        <div class="composer-actions">
+
+          <button
+            class="primary"
+            type="submit"
+          >
+            Save Entry
+          </button>
+
+          <button
+            type="button"
+            class="secondary"
+            id="cancelJournalComposer"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+        <p
+          id="journalMsg"
+          class="msg"
+          aria-live="polite"
+        ></p>
 
       </form>
 
     </section>
 
-    <div class="list">
 
-      ${
-        entries.map(e => `
-          <article class="entry">
+    <section class="journal-list-section">
 
-            <small>
-              ${esc(e.entry_date)}
-            </small>
+      <div class="journal-list-heading">
+        <p class="eyebrow">YOUR JOURNEY</p>
+        <h2>Moments with Him</h2>
+      </div>
 
-            <h3>
-              ${esc(e.title || 'Prayer journal')}
-            </h3>
+      <div
+        class="journal-list"
+        id="journalList"
+      >
 
-            <p>
-              ${esc(e.body).slice(0, 280)}
-            </p>
+        ${
+          entries.length
+            ? entries.map(e => `
+                <article
+                  class="journal-entry-card"
+                  data-entry-date="${esc(e.entry_date || '')}"
+                  data-entry-search="${esc(
+                    `${e.title || ''} ${e.body || ''}`
+                  ).toLowerCase()}"
+                >
 
-          </article>
-        `).join('')
-        ||
-        '<p class="muted">Your first entry can begin today.</p>'
-      }
+                  <div class="journal-entry-date">
+                    ${formatJournalDate(e.entry_date)}
+                  </div>
 
-    </div>
+                  <h3>
+                    ${esc(e.title || 'A moment with God')}
+                  </h3>
+
+                  <p>
+                    ${esc(e.body || '').slice(0, 360)}
+                  </p>
+
+                  <div class="journal-entry-footer">
+                    <span>Read reflection</span>
+                    <span>→</span>
+                  </div>
+
+                </article>
+              `).join('')
+            : `
+              <div class="journal-empty">
+                <div class="journal-empty-mark">❧</div>
+
+                <h3>Your journal is waiting.</h3>
+
+                <p>
+                  Start with a prayer, a thought, a question,
+                  or simply what is on your heart today.
+                </p>
+
+                <button
+                  class="primary"
+                  id="emptyJournalButton"
+                >
+                  Write your first entry
+                </button>
+              </div>
+            `
+        }
+
+      </div>
+
+    </section>
 
   </main>`
 }
@@ -627,6 +833,7 @@ async function render() {
 
   root.innerHTML = shell(content)
 
+  
   bindApp()
 }
 
@@ -878,7 +1085,86 @@ function bindRecovery() {
       }
     }
 }
+function setupVoiceInput(buttonId, textareaId, statusId) {
+  const button = document.getElementById(buttonId)
+  const textarea = document.getElementById(textareaId)
+  const status = document.getElementById(statusId)
 
+  if (!button || !textarea) return
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition
+
+  if (!SpeechRecognition) {
+    button.disabled = true
+    button.title =
+      'Voice-to-text is not supported in this browser.'
+    return
+  }
+
+  const recognition = new SpeechRecognition()
+
+  recognition.lang = 'en-US'
+  recognition.interimResults = false
+  recognition.continuous = false
+
+  let listening = false
+
+  button.addEventListener('click', () => {
+    if (listening) {
+      recognition.stop()
+      return
+    }
+
+    listening = true
+
+    button.classList.add('listening')
+    button.querySelector('span').textContent = 'Listening…'
+
+    if (status) {
+      status.textContent =
+        'Speak naturally. Your words will appear here.'
+    }
+
+    recognition.start()
+  })
+
+  recognition.onresult = event => {
+    const transcript =
+      Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join(' ')
+
+    const existing =
+      textarea.value.trim()
+
+    textarea.value =
+      existing
+        ? `${existing} ${transcript}`
+        : transcript
+  }
+
+  recognition.onerror = event => {
+    if (status) {
+      status.textContent =
+        event.error === 'not-allowed'
+          ? 'Microphone access was not allowed.'
+          : 'Voice entry could not be started. Please try again.'
+    }
+  }
+
+  recognition.onend = () => {
+    listening = false
+
+    button.classList.remove('listening')
+    button.querySelector('span').textContent = 'Speak'
+
+    if (status) {
+      status.textContent = ''
+    }
+  }
+}
 function bindApp() {
 
   document
@@ -916,9 +1202,131 @@ function bindApp() {
       }
     )
 
-  document
-    .getElementById('journalForm')
-    ?.addEventListener(
+const journalComposer =
+  document.getElementById('journalComposer')
+
+const openJournalComposer =
+  document.getElementById('openJournalComposer')
+
+const closeJournalComposer =
+  document.getElementById('closeJournalComposer')
+
+const cancelJournalComposer =
+  document.getElementById('cancelJournalComposer')
+
+const emptyJournalButton =
+  document.getElementById('emptyJournalButton')
+
+
+function openComposer() {
+  if (!journalComposer) return
+
+  journalComposer.hidden = false
+
+  journalComposer.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  })
+
+  setTimeout(() => {
+    document.getElementById('jbody')?.focus()
+  }, 400)
+}
+
+
+function closeComposer() {
+  if (!journalComposer) return
+
+  journalComposer.hidden = true
+}
+
+
+openJournalComposer?.addEventListener(
+  'click',
+  openComposer
+)
+
+closeJournalComposer?.addEventListener(
+  'click',
+  closeComposer
+)
+
+cancelJournalComposer?.addEventListener(
+  'click',
+  closeComposer
+)
+
+emptyJournalButton?.addEventListener(
+  'click',
+  openComposer
+)
+
+
+setupVoiceInput(
+  'journalVoiceButton',
+  'jbody',
+  'journalVoiceStatus'
+)
+
+
+document
+  .getElementById('journalForm')
+  ?.addEventListener(
+    'submit',
+    async e => {
+
+      e.preventDefault()
+
+      const title =
+        document
+          .getElementById('jtitle')
+          .value
+          .trim()
+
+      const body =
+        document
+          .getElementById('jbody')
+          .value
+          .trim()
+
+      const msg =
+        document.getElementById('journalMsg')
+
+      if (!body) {
+        msg.textContent =
+          'Write something before saving your entry.'
+
+        return
+      }
+
+      msg.textContent =
+        'Saving your reflection…'
+
+      const r =
+        await supabase
+          .from('journal_entries')
+          .insert({
+            user_id:
+              state.session.user.id,
+
+            title,
+
+            body
+          })
+
+      if (r.error) {
+        msg.textContent =
+          r.error.message
+
+        return
+      }
+
+      msg.textContent =
+        'Your reflection has been saved.'
+
+      render()
+    }
+  )
       'submit',
       async e => {
         e.preventDefault()
