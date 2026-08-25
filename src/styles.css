@@ -473,6 +473,126 @@ main {
 }
 
 /* =========================================================
+   REFLECTION EXPERIENCE
+========================================================= */
+
+.reflection-card {
+  position: relative;
+}
+
+.reflection-card.is-collapsed {
+  cursor: pointer;
+  transition:
+    border-color .16s ease,
+    box-shadow .16s ease,
+    transform .16s ease;
+}
+
+.reflection-card.is-collapsed:hover {
+  transform: translateY(-1px);
+  border-color: rgba(120,128,106,.35);
+  box-shadow:
+    0 14px 32px rgba(70,53,43,.08);
+}
+
+.reflection-card-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.reflection-card-summary-copy {
+  min-width: 0;
+}
+
+.reflection-card-summary-copy h3 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.reflection-card-summary-copy p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.reflection-expand {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--sage);
+  color: var(--olive-dark);
+  font-size: 1rem;
+}
+
+.reflection-card-content {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.reflection-card-content[hidden] {
+  display: none;
+}
+
+.reflection-prompt {
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(232,234,223,.72),
+      rgba(250,248,243,.95)
+    );
+}
+
+.reflection-prompt p {
+  margin: 0;
+}
+
+.reflection-prompt .eyebrow {
+  margin-bottom: 6px;
+}
+
+.reflection-edit-area {
+  margin-top: 16px;
+}
+
+.reflection-edit-area textarea {
+  min-height: 180px;
+}
+
+.reflection-inline-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/*
+  This is intentionally subtle.
+  The memory is the saved reflection/lesson itself,
+  so we do not create a second "what do you want
+  to remember?" visual box.
+*/
+.memory-context-note {
+  padding: 14px 16px;
+  border-left: 3px solid var(--olive);
+  border-radius: 0 12px 12px 0;
+  background: #f7f5ef;
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+/* =========================================================
    MEMORY BANK
 ========================================================= */
 
@@ -527,6 +647,7 @@ main {
 .memory-search {
   min-height: 48px;
   font-size: 1rem;
+  caret-color: var(--brown-dark);
 }
 
 .memory-filter-grid {
@@ -695,6 +816,7 @@ main {
   font-size: 1.35rem;
   line-height: 1.8;
   color: var(--brown-dark);
+  white-space: pre-wrap;
 }
 
 .connected-record {
@@ -736,11 +858,15 @@ main {
 
 .reflection-detail-text {
   line-height: 1.8;
-  white-space: normal;
+  white-space: pre-wrap;
 }
 
 .memory-actions-card {
   margin-top: 22px;
+}
+
+.memory-actions-card .button-row {
+  margin-top: 4px;
 }
 
 /* =========================================================
@@ -892,6 +1018,10 @@ main {
   .row {
     align-items: flex-start;
   }
+
+  .reflection-card-summary {
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 460px) {
@@ -925,6 +1055,15 @@ main {
   }
 
   .button-row button {
+    width: 100%;
+  }
+
+  .reflection-inline-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .reflection-inline-actions button {
     width: 100%;
   }
 }
