@@ -10,6 +10,7 @@ if (!supabaseUrl || !supabaseKey) {
   )
 }
 
+
 const supabase = createClient(
   supabaseUrl,
   supabaseKey,
