@@ -1,37 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap');
 
-/* =========================================================
-   FOLOW HIM
-   Core Design System
-   ========================================================= */
-
 :root {
   --cream: #fbf8f3;
   --paper: #fffdf9;
-  --paper-soft: rgba(255, 253, 249, 0.88);
-
+  --paper-soft: #f8f3ec;
   --brown: #6f5645;
-  --brown-dark: #513d2d;
   --brown2: #8a705d;
-
   --sage: #a5ae96;
-  --sage-dark: #949b79;
   --sage-soft: #e8ede0;
-
   --ink: #403a35;
   --muted: #7f746b;
-
   --line: #e5dbd0;
-  --line-soft: rgba(229, 219, 208, 0.7);
-
-  --shadow-soft: 0 8px 28px rgba(80, 60, 40, 0.055);
-  --shadow-card: 0 12px 40px rgba(80, 60, 40, 0.07);
+  --shadow: rgba(80, 60, 40, .07);
 }
-
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
 
 * {
   box-sizing: border-box;
@@ -43,13 +24,16 @@ html {
 
 body {
   margin: 0;
-  min-height: 100vh;
   background:
+    radial-gradient(
+      circle at top left,
+      rgba(255,255,255,.7),
+      transparent 35%
+    ),
     linear-gradient(
       135deg,
-      #fbf8f3 0%,
-      #f7f2ea 50%,
-      #f3eee6 100%
+      #fbf8f3,
+      #f3eee6
     );
   color: var(--ink);
   font-family: 'DM Sans', sans-serif;
@@ -59,48 +43,46 @@ button,
 input,
 textarea,
 select {
-  font-family: inherit;
+  font: inherit;
 }
 
 button {
-  cursor: pointer;
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    background .15s ease;
 }
 
-::selection {
-  background: #d9dfcb;
-  color: var(--brown-dark);
+button:hover {
+  transform: translateY(-1px);
 }
-
-
-/* =========================================================
-   APP SHELL
-   ========================================================= */
 
 .app-shell {
   min-height: 100vh;
-  padding-bottom: 82px;
+  padding-bottom: 92px;
 }
 
-
-/* =========================================================
+/* ============================================================
    HEADER
-   ========================================================= */
+============================================================ */
 
 header {
   height: 72px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 0 6vw;
+  padding:
+    0 6vw;
 
-  border-bottom: 1px solid var(--line);
+  border-bottom:
+    1px solid var(--line);
 
-  background: rgba(255, 253, 249, 0.86);
+  background:
+    rgba(255,253,249,.88);
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter:
+    blur(14px);
 
   position: sticky;
   top: 0;
@@ -108,126 +90,123 @@ header {
 }
 
 .brand {
-  display: flex;
-  align-items: center;
+  font-family:
+    'Playfair Display',
+    serif;
+
+  font-size: 23px;
+
+  color:
+    var(--brown);
+
+  display:
+    flex;
+
   gap: 8px;
 
-  color: var(--brown);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 23px;
-  font-weight: 600;
+  align-items:
+    center;
 }
 
 .leaf {
   font-size: 24px;
 }
 
-.ghost {
+.ghost,
+.link {
   border: 0;
-  background: transparent;
-
+  background: none;
   color: var(--brown2);
+  cursor: pointer;
+}
 
-  font-size: 13px;
-  font-weight: 500;
-
-  padding: 8px 10px;
+.ghost {
+  padding: 8px 12px;
+  border-radius: 10px;
 }
 
 .ghost:hover {
-  color: var(--brown-dark);
+  background: var(--paper-soft);
 }
 
-
-/* =========================================================
+/* ============================================================
    AUTH
-   ========================================================= */
+============================================================ */
 
 .auth {
-  width: min(480px, 100%);
+  max-width: 480px;
   margin: 10vh auto;
   padding: 24px;
 }
 
 .mark {
   text-align: center;
-
   color: var(--brown);
-
   font-size: 54px;
 }
 
 .auth h1 {
-  margin: 0;
-
   text-align: center;
+  font:
+    600 42px
+    'Playfair Display',
+    serif;
 
   color: var(--brown);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 42px;
-  font-weight: 600;
+  margin: 0;
 }
 
 .tag {
-  margin: 10px 0 24px;
-
   text-align: center;
-
-  color: var(--muted);
-
   line-height: 1.6;
+  color: var(--muted);
 }
 
-
-/* =========================================================
+/* ============================================================
    CARDS
-   ========================================================= */
+============================================================ */
 
 .card,
 .scripture {
-  border: 1px solid var(--line);
-  border-radius: 24px;
+  background:
+    rgba(255,253,249,.92);
 
-  padding: 24px;
+  border:
+    1px solid var(--line);
 
-  background: var(--paper-soft);
+  border-radius:
+    24px;
 
-  box-shadow: var(--shadow-card);
+  padding:
+    24px;
+
+  box-shadow:
+    0 12px 40px
+    var(--shadow);
 }
 
+.card + .card {
+  margin-top: 18px;
+}
 
-/* =========================================================
-   TABS
-   ========================================================= */
+/* ============================================================
+   FORMS
+============================================================ */
 
 .tabs {
   display: flex;
   gap: 8px;
-
   margin-bottom: 22px;
 }
 
 .tabs button {
   flex: 1;
-
   padding: 12px;
-
   border: 0;
-  border-radius: 12px;
-
   background: #eee7de;
-
+  border-radius: 12px;
   color: var(--brown2);
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.tabs button:hover {
-  background: #e8dfd4;
+  cursor: pointer;
 }
 
 .tabs .active {
@@ -235,137 +214,118 @@ header {
   color: white;
 }
 
-
-/* =========================================================
-   FORM ELEMENTS
-   ========================================================= */
-
 label {
   display: block;
-
-  margin: 16px 0;
-
-  color: var(--ink);
-
   font-size: 13px;
-  font-weight: 500;
+  margin: 14px 0;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-
   margin-top: 7px;
 
-  border: 1px solid var(--line);
-  border-radius: 13px;
+  border:
+    1px solid var(--line);
 
-  padding: 13px 14px;
+  border-radius:
+    14px;
 
-  background: #fff;
+  padding:
+    13px;
 
-  color: var(--ink);
+  background:
+    #fff;
 
-  font: inherit;
+  color:
+    var(--ink);
 
-  outline: none;
+  outline:
+    none;
 
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    border .15s ease,
+    box-shadow .15s ease;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--brown2);
+  border-color:
+    var(--brown2);
 
   box-shadow:
-    0 0 0 3px rgba(138, 112, 93, 0.10);
-
-  background: #fffefa;
+    0 0 0 3px
+    rgba(138,112,93,.10);
 }
 
 textarea {
   resize: vertical;
-  line-height: 1.65;
 }
-
-select {
-  appearance: auto;
-}
-
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
 
 .primary,
 .secondary {
   border: 0;
   border-radius: 13px;
-
   padding: 13px 18px;
-
+  cursor: pointer;
   font-weight: 600;
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
 }
 
 .primary {
   background: var(--brown);
   color: white;
-
-  box-shadow: 0 6px 16px rgba(111, 86, 69, 0.14);
+  box-shadow:
+    0 6px 18px
+    rgba(111,86,69,.14);
 }
 
 .primary:hover {
-  transform: translateY(-1px);
-
-  box-shadow: 0 9px 20px rgba(111, 86, 69, 0.18);
+  box-shadow:
+    0 9px 24px
+    rgba(111,86,69,.20);
 }
 
 .secondary {
   background: var(--sage-soft);
-  color: #52604a;
+  color: var(--brown);
 }
 
-.secondary:hover {
-  background: #dde4d2;
+.small {
+  border:
+    1px solid var(--line);
+
+  background:
+    white;
+
+  border-radius:
+    9px;
+
+  padding:
+    6px 10px;
+
+  cursor:
+    pointer;
 }
 
-.link {
-  display: block;
-
-  margin: 14px auto 0;
-
-  border: 0;
-  background: transparent;
-
-  color: var(--brown2);
-
-  cursor: pointer;
+.msg {
+  min-height: 20px;
+  color: var(--muted);
 }
 
-.link:hover {
-  color: var(--brown-dark);
+.muted {
+  color: var(--muted);
+  line-height: 1.6;
 }
 
-
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
+/* ============================================================
+   MAIN
+============================================================ */
 
 main {
   max-width: 1000px;
-
   margin: 0 auto;
-
   padding: 38px 6vw;
 }
 
@@ -374,897 +334,860 @@ main {
 }
 
 .welcome h2,
-.section-title h2 {
-  margin: 5px 0;
+.section-title h2,
+.memory-header h2 {
+  font:
+    600 38px
+    'Playfair Display',
+    serif;
 
-  color: var(--brown);
+  color:
+    var(--brown);
 
-  font-family: 'Playfair Display', serif;
-  font-size: 38px;
-  font-weight: 600;
-  line-height: 1.15;
+  margin:
+    5px 0;
 }
 
 .section-title {
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .eyebrow {
-  margin: 0;
-
-  color: var(--brown2);
-
   font-size: 11px;
-  font-weight: 600;
-
   letter-spacing: 2px;
+  color: var(--brown2);
+  font-weight: 600;
 }
 
-
-/* =========================================================
+/* ============================================================
    SCRIPTURE
-   ========================================================= */
+============================================================ */
 
 .scripture {
   margin-bottom: 22px;
 }
 
 .scripture blockquote {
-  margin: 10px 0 14px;
+  font:
+    500 27px/1.45
+    'Playfair Display',
+    serif;
 
-  color: var(--brown);
+  color:
+    var(--brown);
 
-  font-family: 'Playfair Display', serif;
-  font-size: 27px;
-  font-weight: 500;
-  line-height: 1.45;
+  margin:
+    10px 0 14px;
 }
 
-.scripture strong {
-  color: var(--brown2);
-
-  font-size: 13px;
-}
-
-
-/* =========================================================
-   HOME GRID
-   ========================================================= */
+/* ============================================================
+   GRID
+============================================================ */
 
 .grid {
-  display: grid;
+  display:
+    grid;
 
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:
+    1fr 1fr;
 
-  gap: 18px;
+  gap:
+    18px;
 
-  margin-top: 18px;
+  margin-top:
+    18px;
 }
 
-
-/* =========================================================
+/* ============================================================
    LISTS
-   ========================================================= */
+============================================================ */
 
 .list {
-  display: grid;
+  display:
+    grid;
 
-  gap: 14px;
+  gap:
+    14px;
 
-  margin-top: 20px;
+  margin-top:
+    20px;
 }
 
 .entry {
-  padding: 19px;
+  background:
+    rgba(255,253,249,.85);
 
-  border: 1px solid var(--line);
-  border-radius: 19px;
+  border:
+    1px solid var(--line);
 
-  background: rgba(255, 253, 249, 0.85);
+  border-radius:
+    18px;
 
-  box-shadow: var(--shadow-soft);
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.entry:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 12px 30px rgba(80, 60, 40, 0.08);
+  padding:
+    18px;
 }
 
 .entry h3 {
-  margin: 7px 0;
+  margin:
+    7px 0;
 
-  color: var(--brown);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
+  color:
+    var(--brown);
 }
 
 .entry p {
-  line-height: 1.65;
+  line-height:
+    1.6;
 }
-
-.entry small {
-  color: var(--brown2);
-}
-
-.muted,
-.msg {
-  color: var(--muted);
-}
-
-
-/* =========================================================
-   ROW / STATUS
-   ========================================================= */
 
 .row {
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
-  gap: 10px;
+  align-items:
+    center;
 
-  flex-wrap: wrap;
+  gap:
+    12px;
 }
 
 .pill {
-  display: inline-flex;
-  align-items: center;
+  display:
+    inline-block;
 
-  min-height: 24px;
+  font-size:
+    11px;
 
-  padding: 5px 10px;
+  padding:
+    5px 9px;
 
-  border-radius: 999px;
+  margin-right:
+    5px;
 
-  background: #eee7de;
+  border-radius:
+    999px;
 
-  color: var(--brown2);
-
-  font-size: 11px;
+  background:
+    #eee7de;
 }
 
 .pill.answered {
-  background: var(--sage-soft);
+  background:
+    var(--sage-soft);
 
-  color: #52604a;
+  color:
+    #52604a;
 }
 
-.small {
-  border: 1px solid var(--line);
-  border-radius: 9px;
+/* ============================================================
+   ANSWERED PRAYER
+============================================================ */
 
-  padding: 6px 10px;
-
-  background: white;
-
-  color: var(--brown);
-
-  font-size: 12px;
-}
-
-.small:hover {
-  background: #f7f2eb;
-}
-
-
-/* =========================================================
-   JOURNAL 2.0
-   ========================================================= */
-
-/*
-   The journal intentionally does NOT look like a literal book.
-
-   It uses:
-   - warm editorial typography
-   - generous whitespace
-   - soft rounded cards
-   - subtle paper tones
-   - sage accents
-   - intentional journal-like spacing
-
-   A true "book mode" can be added later as an optional view.
-*/
-
-
-.journal-page {
-  max-width: 980px;
-
-  padding-top: 8px;
-}
-
-
-/* ---------------------------------------------------------
-   JOURNAL HERO
-   --------------------------------------------------------- */
-
-.journal-hero {
-  padding: 18px 0 30px;
-}
-
-.journal-heading {
-  padding: 34px 10px 26px;
-
-  text-align: center;
-}
-
-.journal-heading h1 {
-  margin: 0;
-
-  color: var(--brown-dark);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 56px;
-  font-weight: 600;
-  line-height: 1.05;
-
-  letter-spacing: -1px;
-}
-
-.journal-script {
-  margin: 10px 0 13px;
-
-  color: var(--brown2);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 27px;
-  font-style: italic;
-  line-height: 1.25;
-}
-
-.journal-intent {
-  margin: 0;
-
-  color: var(--brown2);
-
-  font-size: 10px;
-  font-weight: 600;
-
-  letter-spacing: 3px;
-}
-
-
-/* ---------------------------------------------------------
-   JOURNAL WRITE BUTTON
-   --------------------------------------------------------- */
-
-.journal-write-button {
-  display: flex;
-
-  width: min(100%, 620px);
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 9px;
-
-  margin: 0 auto;
-
-  padding: 15px 22px;
-
-  border: 0;
-  border-radius: 18px;
-
-  background: var(--sage-dark);
-
-  color: white;
-
-  font-size: 15px;
-  font-weight: 600;
-
-  box-shadow:
-    0 10px 25px rgba(80, 80, 50, 0.14);
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.journal-write-button:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 14px 30px rgba(80, 80, 50, 0.18);
-}
-
-.journal-write-button span {
-  font-size: 20px;
-}
-
-
-/* ---------------------------------------------------------
-   JOURNAL SEARCH
-   --------------------------------------------------------- */
-
-.journal-tools {
-  display: flex;
-
-  max-width: 760px;
-
-  align-items: center;
-
-  gap: 10px;
-
-  margin: 4px auto 12px;
-}
-
-.journal-search {
-  position: relative;
-
-  flex: 1;
-}
-
-.journal-search input {
-  height: 48px;
-
-  margin: 0;
+.answer-block,
+.answer-highlight {
+  margin-top:
+    18px;
 
   padding:
-    12px
-    18px
-    12px
-    44px;
-
-  border-radius: 15px;
+    17px;
 
   background:
-    rgba(255, 253, 249, 0.78);
+    var(--paper-soft);
+
+  border-radius:
+    16px;
+
+  border:
+    1px solid var(--line);
 }
 
-.search-icon {
-  position: absolute;
-
-  left: 15px;
-  top: 9px;
-
-  z-index: 2;
-
-  color: var(--brown2);
-
-  font-size: 23px;
+.answer-block p {
+  margin-top:
+    6px;
 }
 
-.journal-filter-button {
-  width: 48px;
-  height: 48px;
+/* ============================================================
+   REFLECTION PROMPT
+============================================================ */
 
-  border: 1px solid var(--line);
-  border-radius: 15px;
+.reflection-prompt-card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,253,249,.96),
+      rgba(242,238,229,.92)
+    );
+}
+
+.reflection-prompt-card h3 {
+  font:
+    500 22px/1.5
+    'Playfair Display',
+    serif;
+
+  color:
+    var(--brown);
+}
+
+/* ============================================================
+   MEMORY CHOICE
+============================================================ */
+
+.memory-choice {
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  gap:
+    13px;
+
+  padding:
+    15px;
+
+  margin:
+    20px 0;
 
   background:
-    rgba(255, 253, 249, 0.78);
+    var(--paper-soft);
 
-  color: var(--brown);
+  border:
+    1px solid var(--line);
 
-  font-size: 20px;
+  border-radius:
+    15px;
+
+  cursor:
+    pointer;
 }
 
+.memory-choice input {
+  width:
+    19px;
 
-/* ---------------------------------------------------------
-   JOURNAL FILTERS
-   --------------------------------------------------------- */
+  height:
+    19px;
 
-.journal-filters {
-  display: flex;
+  margin:
+    2px 0 0;
 
-  justify-content: center;
-
-  gap: 9px;
-
-  margin: 12px auto 30px;
-
-  flex-wrap: wrap;
+  accent-color:
+    var(--brown);
 }
 
-.journal-filter {
-  border: 1px solid var(--line);
-  border-radius: 999px;
+.memory-choice span {
+  display:
+    flex;
 
-  padding: 9px 18px;
+  flex-direction:
+    column;
 
-  background: transparent;
-
-  color: var(--brown2);
-
-  font-size: 12px;
+  gap:
+    4px;
 }
 
-.journal-filter:hover {
-  background: #f1ebe3;
+.memory-choice small {
+  color:
+    var(--muted);
+
+  line-height:
+    1.5;
 }
 
-.journal-filter.active {
-  border-color: var(--brown);
+/* ============================================================
+   VOICE
+============================================================ */
 
-  background: var(--brown);
+.voice-row {
+  display:
+    flex;
 
-  color: white;
+  align-items:
+    center;
+
+  gap:
+    12px;
+
+  margin:
+    4px 0 18px;
 }
 
-
-/* ---------------------------------------------------------
-   JOURNAL COMPOSER
-   --------------------------------------------------------- */
-
-.journal-composer {
-  max-width: 760px;
-
-  margin: 0 auto 38px;
-
-  scroll-margin-top: 90px;
+.voice-row .secondary {
+  white-space:
+    nowrap;
 }
 
-.composer-heading {
-  display: flex;
-
-  align-items: flex-start;
-  justify-content: space-between;
-
-  gap: 20px;
+.voice-row .muted {
+  font-size:
+    12px;
 }
 
-.composer-heading h2 {
-  margin: 4px 0 0;
+/* ============================================================
+   MEMORY BANK
+============================================================ */
 
-  color: var(--brown);
+.memory-header {
+  display:
+    flex;
 
-  font-family: 'Playfair Display', serif;
-  font-size: 30px;
-  font-weight: 600;
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-end;
+
+  gap:
+    30px;
+
+  margin-bottom:
+    28px;
 }
 
-.composer-close {
-  width: 34px;
-  height: 34px;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: #eee7de;
-
-  color: var(--brown);
-
-  font-size: 22px;
+.memory-header > div:first-child {
+  max-width:
+    700px;
 }
 
+.memory-header p {
+  line-height:
+    1.65;
 
-/* ---------------------------------------------------------
-   VOICE TO TEXT
-   --------------------------------------------------------- */
-
-.voice-field {
-  position: relative;
+  color:
+    var(--muted);
 }
 
-.voice-field textarea {
-  min-height: 125px;
+.memory-count {
+  min-width:
+    90px;
 
-  padding-bottom: 58px;
-}
+  height:
+    90px;
 
-.voice-button {
-  position: absolute;
-
-  right: 10px;
-  bottom: 10px;
-
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  min-height: 34px;
-
-  border: 1px solid var(--line);
-  border-radius: 999px;
-
-  padding: 8px 14px;
+  border-radius:
+    50%;
 
   background:
-    rgba(255, 253, 249, 0.97);
+    var(--sage-soft);
 
-  color: var(--brown);
+  display:
+    flex;
 
-  font-size: 12px;
-  font-weight: 600;
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  color:
+    var(--brown);
+}
+
+.memory-count span {
+  font:
+    600 28px
+    'Playfair Display',
+    serif;
+}
+
+.memory-count small {
+  font-size:
+    11px;
+
+  color:
+    var(--brown2);
+}
+
+.memory-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap:
+    18px;
+}
+
+.memory-card {
+  position:
+    relative;
+
+  background:
+    rgba(255,253,249,.94);
+
+  border:
+    1px solid var(--line);
+
+  border-radius:
+    22px;
+
+  padding:
+    22px;
 
   box-shadow:
-    0 3px 10px rgba(70, 50, 30, 0.07);
+    0 10px 30px
+    rgba(80,60,40,.055);
 
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  overflow:
+    hidden;
 }
 
-.voice-button:hover {
-  background: #f4eee6;
+.memory-card::before {
+  content:
+    '';
 
-  transform: translateY(-1px);
-}
+  position:
+    absolute;
 
-.voice-button.listening {
-  border-color: var(--sage-dark);
+  top:
+    0;
 
-  background: var(--sage-dark);
+  left:
+    0;
 
-  color: white;
-}
+  right:
+    0;
 
-.voice-button:disabled {
-  opacity: 0.5;
-
-  cursor: not-allowed;
-}
-
-.voice-status {
-  display: block;
-
-  min-height: 18px;
-
-  margin-top: 5px;
-
-  color: var(--brown2);
-
-  font-size: 11px;
-}
-
-
-/* ---------------------------------------------------------
-   COMPOSER ACTIONS
-   --------------------------------------------------------- */
-
-.composer-actions {
-  display: flex;
-
-  gap: 10px;
-
-  margin-top: 18px;
-}
-
-
-/* ---------------------------------------------------------
-   JOURNAL ENTRY CARDS
-   --------------------------------------------------------- */
-
-.journal-list-section {
-  max-width: 760px;
-
-  margin: 0 auto;
-}
-
-.journal-list-heading {
-  margin-bottom: 16px;
-}
-
-.journal-list-heading h2 {
-  margin: 4px 0 0;
-
-  color: var(--brown);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 30px;
-  font-weight: 600;
-}
-
-.journal-list {
-  display: grid;
-
-  gap: 15px;
-}
-
-.journal-entry-card {
-  position: relative;
-
-  padding: 22px 24px;
-
-  border: 1px solid var(--line);
-  border-radius: 21px;
+  height:
+    4px;
 
   background:
-    rgba(255, 253, 249, 0.84);
-
-  box-shadow: var(--shadow-soft);
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    var(--sage);
 }
 
-.journal-entry-card:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 13px 34px rgba(80, 60, 40, 0.09);
+.memory-card.lesson::before {
+  background:
+    var(--brown2);
 }
 
-.journal-entry-date {
-  color: var(--brown2);
+.memory-card-top {
+  display:
+    flex;
 
-  font-size: 11px;
-  font-weight: 600;
+  justify-content:
+    space-between;
 
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  margin-bottom:
+    15px;
 }
 
-.journal-entry-card h3 {
-  margin: 8px 0;
+.memory-type {
+  font-size:
+    11px;
 
-  color: var(--brown);
+  font-weight:
+    600;
 
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.2;
+  letter-spacing:
+    .5px;
+
+  color:
+    var(--brown);
 }
 
-.journal-entry-card p {
-  margin: 0;
+.memory-date {
+  font-size:
+    11px;
 
-  color: #655d56;
-
-  line-height: 1.7;
+  color:
+    var(--muted);
 }
 
-.journal-entry-footer {
-  display: flex;
+.memory-card h3 {
+  font:
+    600 23px
+    'Playfair Display',
+    serif;
 
-  align-items: center;
-  justify-content: space-between;
+  color:
+    var(--brown);
 
-  gap: 10px;
-
-  margin-top: 18px;
-  padding-top: 13px;
-
-  border-top: 1px solid var(--line-soft);
-
-  color: var(--brown2);
-
-  font-size: 12px;
-  font-weight: 600;
+  margin:
+    0 0 14px;
 }
 
+.memory-text {
+  font-size:
+    15px;
 
-/* ---------------------------------------------------------
-   EMPTY JOURNAL
-   --------------------------------------------------------- */
+  line-height:
+    1.75;
 
-.journal-empty {
-  padding: 45px 25px;
+  color:
+    var(--ink);
 
-  border: 1px dashed var(--line);
-  border-radius: 24px;
+  white-space:
+    pre-wrap;
+}
+
+.memory-prayer {
+  margin-top:
+    20px;
+
+  padding-top:
+    17px;
+
+  border-top:
+    1px solid var(--line);
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    5px;
+}
+
+.memory-prayer strong {
+  color:
+    var(--brown);
+}
+
+.memory-prayer p {
+  margin:
+    4px 0 0;
+
+  color:
+    var(--muted);
+
+  line-height:
+    1.55;
+
+  font-size:
+    13px;
+}
+
+.memory-actions {
+  display:
+    flex;
+
+  gap:
+    9px;
+
+  margin-top:
+    20px;
+}
+
+.memory-actions .secondary {
+  padding:
+    9px 13px;
+
+  font-size:
+    12px;
+}
+
+.memory-delete {
+  border:
+    1px solid var(--line);
 
   background:
-    rgba(255, 253, 249, 0.55);
+    transparent;
 
-  text-align: center;
+  color:
+    var(--muted);
+
+  border-radius:
+    12px;
+
+  padding:
+    9px 13px;
+
+  cursor:
+    pointer;
+
+  font-size:
+    12px;
 }
 
-.journal-empty-mark {
-  color: var(--brown);
+.memory-delete:hover {
+  background:
+    #f5ebe6;
 
-  font-size: 40px;
+  color:
+    #7a5147;
 }
 
-.journal-empty h3 {
-  margin: 10px 0 8px;
+.empty-memory {
+  text-align:
+    center;
 
-  color: var(--brown);
-
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  font-weight: 600;
+  padding:
+    55px 30px;
 }
 
-.journal-empty p {
-  max-width: 430px;
+.empty-memory-icon {
+  width:
+    62px;
 
-  margin: 0 auto 20px;
+  height:
+    62px;
 
-  color: #746a62;
+  margin:
+    0 auto 18px;
 
-  line-height: 1.6;
+  border-radius:
+    50%;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  background:
+    var(--sage-soft);
+
+  color:
+    var(--brown);
+
+  font-size:
+    25px;
 }
 
+.empty-memory h3 {
+  font:
+    600 25px
+    'Playfair Display',
+    serif;
 
-/* =========================================================
-   BOTTOM NAVIGATION
-   ========================================================= */
+  color:
+    var(--brown);
+
+  margin:
+    0 0 10px;
+}
+
+.empty-memory p {
+  max-width:
+    520px;
+
+  margin:
+    0 auto 22px;
+
+  line-height:
+    1.7;
+
+  color:
+    var(--muted);
+}
+
+/* ============================================================
+   BOTTOM NAV
+============================================================ */
 
 .bottom-nav {
-  position: fixed;
+  position:
+    fixed;
 
-  right: 0;
-  bottom: 0;
-  left: 0;
+  bottom:
+    0;
 
-  display: flex;
+  left:
+    0;
 
-  align-items: center;
-  justify-content: center;
-
-  gap: 6px;
-
-  padding: 10px;
-
-  border-top: 1px solid var(--line);
+  right:
+    0;
 
   background:
-    rgba(255, 253, 249, 0.95);
+    rgba(255,253,249,.95);
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border-top:
+    1px solid var(--line);
 
-  z-index: 30;
+  display:
+    flex;
+
+  justify-content:
+    center;
+
+  gap:
+    4px;
+
+  padding:
+    10px;
+
+  z-index:
+    30;
+
+  backdrop-filter:
+    blur(14px);
 }
 
 .bottom-nav button {
-  border: 0;
-  border-radius: 12px;
+  border:
+    0;
 
-  padding: 10px 18px;
+  background:
+    transparent;
 
-  background: transparent;
+  padding:
+    10px 15px;
 
-  color: var(--brown2);
+  color:
+    var(--brown2);
 
-  font-size: 13px;
+  cursor:
+    pointer;
 
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
+  border-radius:
+    12px;
+
+  font-size:
+    13px;
 }
 
 .bottom-nav button:hover {
-  background: #f1ebe3;
-
-  color: var(--brown);
+  background:
+    var(--paper-soft);
 }
 
-
-/* =========================================================
+/* ============================================================
    RESPONSIVE
-   ========================================================= */
+============================================================ */
+
+@media (max-width: 800px) {
+
+  .memory-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .memory-header {
+    align-items:
+      flex-start;
+  }
+
+}
 
 @media (max-width: 700px) {
 
-  header {
-    padding: 0 5vw;
+  .grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .welcome h2,
+  .section-title h2,
+  .memory-header h2 {
+    font-size:
+      32px;
+  }
+
+  .memory-header {
+    flex-direction:
+      column;
+
+    gap:
+      18px;
+  }
+
+  .memory-count {
+    width:
+      76px;
+
+    height:
+      76px;
+
+    min-width:
+      76px;
+  }
+
+  .memory-count span {
+    font-size:
+      23px;
+  }
+
+  .bottom-nav {
+    gap:
+      0;
+
+    justify-content:
+      space-around;
+  }
+
+  .bottom-nav button {
+    padding:
+      10px 7px;
+
+    font-size:
+      11px;
   }
 
   main {
     padding:
-      30px
-      5vw
-      34px;
+      30px 5vw;
   }
 
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .welcome h2,
-  .section-title h2 {
-    font-size: 32px;
-  }
-
-  .scripture blockquote {
-    font-size: 24px;
-  }
-
-  .journal-heading {
-    padding-top: 28px;
-  }
-
-  .journal-heading h1 {
-    font-size: 45px;
-
-    letter-spacing: -0.5px;
-  }
-
-  .journal-script {
-    font-size: 24px;
-  }
-
-  .journal-intent {
-    font-size: 9px;
-
-    letter-spacing: 2px;
-  }
-
-  .journal-tools {
-    gap: 7px;
-  }
-
-  .journal-filter {
-    padding: 8px 14px;
-
-    font-size: 12px;
-  }
-
-  .journal-entry-card {
-    padding: 19px;
-  }
-
-  .journal-entry-card h3 {
-    font-size: 22px;
-  }
-
-  .composer-actions {
-    flex-direction: column;
-  }
-
-  .composer-actions button {
-    width: 100%;
-  }
-
-  .bottom-nav {
-    gap: 2px;
-  }
-
-  .bottom-nav button {
-    padding: 10px 8px;
-
-    font-size: 12px;
-  }
 }
 
+@media (max-width: 480px) {
 
-/* =========================================================
-   SMALL MOBILE
-   ========================================================= */
-
-@media (max-width: 420px) {
+  header {
+    padding:
+      0 5vw;
+  }
 
   .brand {
-    font-size: 20px;
+    font-size:
+      20px;
   }
 
-  .auth {
-    padding: 18px;
-  }
-
-  .auth h1 {
-    font-size: 36px;
+  .ghost {
+    font-size:
+      12px;
   }
 
   .card,
   .scripture {
-    padding: 20px;
+    padding:
+      19px;
   }
 
-  .journal-heading h1 {
-    font-size: 39px;
+  .memory-card {
+    padding:
+      19px;
   }
 
-  .journal-script {
-    font-size: 21px;
+  .memory-card-top {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap:
+      5px;
   }
 
-  .journal-write-button {
-    padding: 14px 16px;
+  .voice-row {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
   }
 
-  .voice-button span {
-    display: none;
+  .voice-row .secondary {
+    width:
+      100%;
   }
 
-  .voice-button {
-    width: 38px;
-    height: 34px;
-
-    padding: 0;
-  }
 }
