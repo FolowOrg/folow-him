@@ -1053,7 +1053,9 @@ async function prayersView() {
   `
 }
 
-/* =========================================================
+
+
+/* =======/* =========================================================
    REFLECTION
 ========================================================= */
 
@@ -1100,8 +1102,15 @@ async function reflectionView(
       prayer.id
     )
 
+  const showReadOnly =
+    Boolean(reflection) &&
+    state.reflectionReadOnly &&
+    !state.editingReflection
+
   const isEditing =
-    Boolean(reflection)
+    !reflection ||
+    Boolean(state.editingReflection) ||
+    !showReadOnly
 
   return `
     <main>
@@ -1164,116 +1173,155 @@ async function reflectionView(
 
       </section>
 
-      <section class="card">
-
-        <p class="eyebrow">
-          YOUR REFLECTION
-        </p>
-
-        <h3>
-          ${esc(suggestedPrompt)}
-        </h3>
-
-        <p class="muted">
-          Write one reflection. It can be a lesson,
-          revelation, personal thought, or anything you
-          want to carry forward. You can return and add
-          to it later.
-        </p>
-
-        <form
-          id="reflectionForm"
-          data-reflection-id="${
-            reflection?.id || ''
-          }"
-        >
-
-          <label>
-
-            Your reflection
-
-            <textarea
-              id="reflectionText"
-              rows="10"
-              placeholder="Write your reflection, revelation, lesson, or anything you want to remember..."
-            >${
-              reflection?.reflection_text
-                ? esc(
-                    reflection.reflection_text
-                  )
-                : ''
-            }</textarea>
-
-          </label>
-
-          <div class="button-row">
-
-            <button
-              class="primary"
-              type="submit"
-            >
-              ${
-                isEditing
-                  ? 'Update reflection'
-                  : 'Save reflection'
-              }
-            </button>
-
-            <button
-              type="button"
-              class="secondary"
-              id="cancelReflection"
-            >
-              Back
-            </button>
-
-          </div>
-
-          <p
-            id="reflectionMsg"
-            class="msg"
-            aria-live="polite"
-          ></p>
-
-        </form>
-
-      </section>
-
       ${
-        reflection
+        showReadOnly
           ? `
-            <section class="card reflection-history-card">
+            <section
+              class="card reflection-read-card"
+              tabindex="0"
+            >
 
-              <p class="eyebrow">
-                YOUR REFLECTION IS ALSO YOUR MEMORY
-              </p>
+              <div class="reflection-read-header">
 
-              <p class="muted">
-                This reflection is available in your Memory Bank
-                so you can return to it later. Updating your
-                reflection updates the connected memory.
-              </p>
+                <div>
+                  <p class="eyebrow">
+                    YOUR REFLECTION
+                  </p>
 
-              <p class="muted">
-                Last updated
+                  <p class="muted">
+                    Last updated
+                    ${esc(
+                      formatDateTime(
+                        reflection.updated_at ||
+                        reflection.created_at
+                      )
+                    )}
+                  </p>
+                </div>
+
+                <span class="reflection-read-icon">
+                  🌿
+                </span>
+
+              </div>
+
+              <div class="reflection-read-text">
                 ${esc(
-                  formatDateTime(
-                    reflection.updated_at ||
-                    reflection.created_at
-                  )
+                  reflection.reflection_text
+                ).replace(
+                  /\n/g,
+                  '<br>'
                 )}
+              </div>
+
+              <p class="muted reflection-read-hint">
+                Your reflection is also your connected memory.
               </p>
+
+              <div class="button-row">
+
+                <button
+                  class="primary"
+                  type="button"
+                  id="editReflection"
+                >
+                  Edit reflection
+                </button>
+
+                <button
+                  type="button"
+                  class="secondary"
+                  id="cancelReflection"
+                >
+                  Back
+                </button>
+
+              </div>
 
             </section>
           `
-          : ''
+          : `
+            <section class="card">
+
+              <p class="eyebrow">
+                YOUR REFLECTION
+              </p>
+
+              <h3>
+                ${esc(suggestedPrompt)}
+              </h3>
+
+              <p class="muted">
+                Write one reflection. It can be a lesson,
+                revelation, personal thought, or anything you
+                want to carry forward. You can return and add
+                to it later.
+              </p>
+
+              <form
+                id="reflectionForm"
+                data-reflection-id="${
+                  reflection?.id || ''
+                }"
+              >
+
+                <label>
+
+                  Your reflection
+
+                  <textarea
+                    id="reflectionText"
+                    rows="10"
+                    placeholder="Write your reflection, revelation, lesson, or anything you want to remember..."
+                  >${
+                    reflection?.reflection_text
+                      ? esc(
+                          reflection.reflection_text
+                        )
+                      : ''
+                  }</textarea>
+
+                </label>
+
+                <div class="button-row">
+
+                  <button
+                    class="primary"
+                    type="submit"
+                  >
+                    ${
+                      isEditing &&
+                      reflection
+                        ? 'Update reflection'
+                        : 'Save reflection'
+                    }
+                  </button>
+
+                  <button
+                    type="button"
+                    class="secondary"
+                    id="cancelReflection"
+                  >
+                    Back
+                  </button>
+
+                </div>
+
+                <p
+                  id="reflectionMsg"
+                  class="msg"
+                  aria-live="polite"
+                ></p>
+
+              </form>
+
+            </section>
+          `
       }
 
     </main>
   `
-}
-
-/* =========================================================
+}==================================================
    MEMORY BANK
 ========================================================= */
 
@@ -1853,23 +1901,6 @@ async function memoryDetailView(
 
       </div>
 
-      <section class="card memory-detail-main">
-
-        <div class="memory-detail-label">
-          WHAT I WANT TO REMEMBER
-        </div>
-
-        <div class="memory-full-text">
-          ${esc(
-            memory.memory_text
-          ).replace(
-            /\n/g,
-            '<br>'
-          )}
-        </div>
-
-      </section>
-
       ${
         prayer
           ? `
@@ -1882,7 +1913,6 @@ async function memoryDetailView(
                 </span>
 
                 <div>
-
                   <p class="eyebrow">
                     ORIGINAL PRAYER
                   </p>
@@ -1892,7 +1922,6 @@ async function memoryDetailView(
                       prayer.title
                     )}
                   </h3>
-
                 </div>
 
               </div>
@@ -1937,7 +1966,13 @@ async function memoryDetailView(
       ${
         reflection
           ? `
-            <section class="connected-record">
+            <section
+              class="connected-record reflection-clickable"
+              id="openConnectedReflection"
+              tabindex="0"
+              role="button"
+              aria-label="Open connected reflection"
+            >
 
               <div class="connected-record-header">
 
@@ -1946,7 +1981,6 @@ async function memoryDetailView(
                 </span>
 
                 <div>
-
                   <p class="eyebrow">
                     CONNECTED REFLECTION
                   </p>
@@ -1960,7 +1994,6 @@ async function memoryDetailView(
                       )
                     )}
                   </p>
-
                 </div>
 
               </div>
@@ -1974,17 +2007,8 @@ async function memoryDetailView(
                 )}
               </div>
 
-              <div class="button-row">
-
-                <button
-                  class="secondary"
-                  data-edit-reflection="${esc(
-                    reflection.id
-                  )}"
-                >
-                  Edit reflection
-                </button>
-
+              <div class="reflection-card-link">
+                Open reflection →
               </div>
 
             </section>
@@ -1999,6 +2023,11 @@ async function memoryDetailView(
               <h3>
                 No reflection is connected yet.
               </h3>
+
+              <p class="muted">
+                Add a reflection to turn this answered prayer
+                into a lasting remembrance.
+              </p>
 
               ${
                 prayer
@@ -2044,8 +2073,11 @@ async function memoryDetailView(
         </div>
 
         <p class="muted">
-          Editing this memory does not change the
-          original prayer or reflection.
+          ${
+            reflection
+              ? 'Edit memory opens your connected reflection. Your reflection and memory stay linked to this answered prayer.'
+              : 'This memory is not connected to a reflection, so it can be edited directly.'
+          }
         </p>
 
       </section>
