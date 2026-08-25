@@ -10,7 +10,6 @@ if (!supabaseUrl || !supabaseKey) {
   )
 }
 
-
 const supabase = createClient(
   supabaseUrl,
   supabaseKey,
@@ -33,7 +32,7 @@ const state = {
   authMode: 'login',
   recoveryMode: false,
   reflectionPrayer: null,
-  editingReflection: null
+  selectedMemory: null
 }
 
 const prayerCategories = [
@@ -43,6 +42,18 @@ const prayerCategories = [
   'Work & Purpose',
   'Finances',
   'Personal Growth',
+  'Other'
+]
+
+const memoryCategories = [
+  'Faith',
+  'Surrender',
+  'Provision',
+  'Guidance',
+  'Family',
+  'Healing',
+  'Growth',
+  'Answered Prayer',
   'Other'
 ]
 
@@ -64,6 +75,8 @@ async function loadSession() {
 }
 
 async function loadProfile() {
+  if (!state.session) return
+
   const { data } = await supabase
     .from('profiles')
     .select('*')
@@ -91,26 +104,27 @@ async function loadToday() {
 function esc(s = '') {
   return String(s).replace(
     /[&<>"']/g,
-    c => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;'
-    }[c])
+    c =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[c])
   )
 }
 
-function formatDate(date) {
-  if (!date) return ''
+function formatDate(value) {
+  if (!value) return ''
 
-  const parsed = new Date(date)
+  const date = new Date(value)
 
-  if (Number.isNaN(parsed.getTime())) {
-    return esc(date)
+  if (Number.isNaN(date.getTime())) {
+    return String(value)
   }
 
-  return parsed.toLocaleDateString(
+  return date.toLocaleDateString(
     undefined,
     {
       year: 'numeric',
@@ -120,9 +134,7 @@ function formatDate(date) {
   )
 }
 
-/* =========================================================
-   AUTH
-========================================================= */
+/* ---------------- AUTH ---------------- */
 
 function authView() {
   if (state.recoveryMode) {
@@ -193,8 +205,7 @@ function authView() {
     <h1>Folow Him</h1>
 
     <p class="tag">
-      A gentle place to pray, reflect,
-      and remember His faithfulness.
+      A gentle place to pray, reflect, and remember His faithfulness.
     </p>
 
     <section class="card">
@@ -331,9 +342,7 @@ function recoveryView() {
   </main>`
 }
 
-/* =========================================================
-   APP SHELL
-========================================================= */
+/* ---------------- APP SHELL ---------------- */
 
 function shell(content) {
   return `<div class="app-shell">
@@ -383,9 +392,7 @@ function shell(content) {
   </div>`
 }
 
-/* =========================================================
-   HOME
-========================================================= */
+/* ---------------- HOME ---------------- */
 
 async function homeView() {
   const c = state.content
@@ -484,7 +491,7 @@ async function homeView() {
           class="secondary"
           data-view="memories"
         >
-          Visit Memory Bank
+          Visit My Memories
         </button>
 
       </div>
@@ -494,9 +501,7 @@ async function homeView() {
   </main>`
 }
 
-/* =========================================================
-   JOURNAL
-========================================================= */
+/* ---------------- JOURNAL ---------------- */
 
 async function journalView() {
   const {
@@ -571,6 +576,7 @@ async function journalView() {
             required
             placeholder="Write freely..."
           ></textarea>
+
         </label>
 
         <div class="voice-row">
@@ -615,7 +621,7 @@ async function journalView() {
               <article class="entry">
 
                 <small>
-                  ${formatDate(e.entry_date)}
+                  ${esc(e.entry_date)}
                 </small>
 
                 <h3>
@@ -626,10 +632,7 @@ async function journalView() {
                 </h3>
 
                 <p>
-                  ${esc(e.body).slice(
-                    0,
-                    280
-                  )}
+                  ${esc(e.body).slice(0, 280)}
                 </p>
 
               </article>
@@ -645,9 +648,7 @@ async function journalView() {
   </main>`
 }
 
-/* =========================================================
-   PRAYERS
-========================================================= */
+/* ---------------- PRAYERS ---------------- */
 
 async function prayersView() {
   const {
@@ -769,18 +770,14 @@ async function prayersView() {
 
                   <div>
 
-                    <span class="pill ${esc(
-                      p.status
-                    )}">
+                    <span class="pill ${esc(p.status)}">
                       ${esc(p.status)}
                     </span>
 
                     ${
                       p.category
                         ? `<span class="pill">
-                            ${esc(
-                              p.category
-                            )}
+                            ${esc(p.category)}
                           </span>`
                         : ''
                     }
@@ -788,13 +785,10 @@ async function prayersView() {
                   </div>
 
                   ${
-                    p.status ===
-                    'active'
+                    p.status === 'active'
                       ? `<button
                           class="small"
-                          data-answer="${esc(
-                            p.id
-                          )}"
+                          data-answer="${esc(p.id)}"
                         >
                           Mark answered
                         </button>`
@@ -808,9 +802,7 @@ async function prayersView() {
                 </h3>
 
                 <p>
-                  ${esc(
-                    p.details || ''
-                  )}
+                  ${esc(p.details || '')}
                 </p>
 
                 ${
@@ -822,17 +814,13 @@ async function prayersView() {
                             Answer:
                           </strong>
 
-                          ${esc(
-                            p.answer_note
-                          )}
+                          ${esc(p.answer_note)}
                         </p>
 
                         <button
                           type="button"
                           class="secondary"
-                          data-reflect="${esc(
-                            p.id
-                          )}"
+                          data-reflect="${esc(p.id)}"
                         >
                           Reflect on this answer
                         </button>
@@ -854,9 +842,7 @@ async function prayersView() {
   </main>`
 }
 
-/* =========================================================
-   REFLECTION
-========================================================= */
+/* ---------------- REFLECTION ---------------- */
 
 function reflectionView(prayer) {
   const suggestedPrompt =
@@ -909,9 +895,7 @@ function reflectionView(prayer) {
               </p>
 
               <p>
-                ${esc(
-                  prayer.answer_note
-                )}
+                ${esc(prayer.answer_note)}
               </p>
 
             </div>`
@@ -931,8 +915,8 @@ function reflectionView(prayer) {
       </h3>
 
       <p class="muted">
-        This is only a suggestion.
-        Your reflection can be completely different.
+        This is only a suggestion. Your reflection can
+        be completely different.
       </p>
 
     </section>
@@ -952,7 +936,7 @@ function reflectionView(prayer) {
 
         </label>
 
-        <label class="memory-choice">
+        <label class="checkbox-row">
 
           <input
             id="saveMemory"
@@ -961,16 +945,7 @@ function reflectionView(prayer) {
           >
 
           <span>
-
-            <strong>
-              ✦ Keep this thought
-            </strong>
-
-            <small>
-              Save this reflection to your Memory Bank
-              so you can return to it later.
-            </small>
-
+            Save this as a memory / lesson learned
           </span>
 
         </label>
@@ -1002,9 +977,7 @@ function reflectionView(prayer) {
   </main>`
 }
 
-/* =========================================================
-   MEMORY BANK
-========================================================= */
+/* ---------------- MEMORY BANK ---------------- */
 
 async function memoriesView() {
   const {
@@ -1015,20 +988,15 @@ async function memoriesView() {
     .select(`
       *,
       prayer_requests (
+        id,
         title,
         details,
         answer_note,
-        answered_at
+        answered_at,
+        category
       )
     `)
-    .eq(
-      'user_id',
-      state.session.user.id
-    )
-    .eq(
-      'save_as_memory',
-      true
-    )
+    .eq('is_memory', true)
     .order(
       'updated_at',
       {
@@ -1042,7 +1010,7 @@ async function memoriesView() {
       <div class="section-title">
 
         <p class="eyebrow">
-          MEMORY BANK
+          MY MEMORIES
         </p>
 
         <h2>
@@ -1053,8 +1021,11 @@ async function memoriesView() {
 
       <section class="card">
 
-        <p class="msg">
-          Memories could not be loaded:
+        <p>
+          Your memories could not be loaded.
+        </p>
+
+        <p class="muted">
           ${esc(error.message)}
         </p>
 
@@ -1068,7 +1039,7 @@ async function memoriesView() {
     <div class="section-title">
 
       <p class="eyebrow">
-        MEMORY BANK
+        MY MEMORIES
       </p>
 
       <h2>
@@ -1076,121 +1047,91 @@ async function memoriesView() {
       </h2>
 
       <p class="muted">
-        The thoughts, lessons, and revelations
-        you chose to keep.
+        The moments, lessons, and answered prayers
+        you don't want to forget.
       </p>
 
     </div>
 
     ${
       memories.length
-        ? `<div class="list">
+        ? `<div class="memory-list">
 
-            ${memories
-              .map(memory => {
+            ${
+              memories
+                .map(memory => {
 
-                const prayer =
-                  memory.prayer_requests
+                  const prayer =
+                    memory.prayer_requests
 
-                return `
-                  <article class="memory-card">
+                  const title =
+                    memory.memory_title ||
+                    prayer?.title ||
+                    'A memory of His faithfulness'
 
-                    <div class="memory-header">
+                  return `
+                    <article class="memory-card">
 
-                      <div>
+                      <div class="memory-top">
 
-                        <p class="eyebrow">
-                          MEMORY
-                        </p>
+                        <span class="pill">
+                          ${
+                            esc(
+                              memory.memory_category ||
+                              'Faith'
+                            )
+                          }
+                        </span>
 
                         <small>
-                          Saved ${formatDate(
-                            memory.updated_at ||
-                            memory.created_at
+                          ${esc(
+                            formatDate(
+                              memory.updated_at ||
+                              memory.created_at
+                            )
                           )}
                         </small>
 
                       </div>
 
-                      <button
-                        type="button"
-                        class="small"
-                        data-edit-memory="${esc(
-                          memory.id
-                        )}"
-                      >
-                        Edit reflection
-                      </button>
+                      <h3>
+                        ${esc(title)}
+                      </h3>
 
-                    </div>
-
-                    ${
-                      prayer
-                        ? `<div class="memory-prayer">
-
-                            <p class="eyebrow">
-                              ANSWERED PRAYER
-                            </p>
-
-                            <h3>
-                              ${esc(
-                                prayer.title
-                              )}
-                            </h3>
-
-                            ${
-                              prayer.answer_note
-                                ? `<p>
-                                    <strong>
-                                      Answer:
-                                    </strong>
-                                    ${esc(
-                                      prayer.answer_note
-                                    )}
-                                  </p>`
-                                : ''
-                            }
-
-                          </div>`
-                        : ''
-                    }
-
-                    <div class="memory-reflection">
-
-                      <p class="eyebrow">
-                        WHAT I WANT TO REMEMBER
-                      </p>
-
-                      <p>
+                      <p class="memory-excerpt">
                         ${esc(
                           memory.reflection_text
-                        )}
+                        ).slice(0, 240)}
+                        ${
+                          memory.reflection_text?.length > 240
+                            ? '…'
+                            : ''
+                        }
                       </p>
 
-                    </div>
+                      ${
+                        prayer
+                          ? `<p class="memory-connection">
+                              <strong>
+                                Answered prayer:
+                              </strong>
+                              ${esc(prayer.title)}
+                            </p>`
+                          : ''
+                      }
 
-                    ${
-                      memory.reflection_prompt
-                        ? `<div class="memory-prompt">
+                      <button
+                        class="secondary"
+                        data-memory="${esc(memory.id)}"
+                      >
+                        Open memory
+                      </button>
 
-                            <small>
-                              Reflection prompt
-                            </small>
-
-                            <p>
-                              ${esc(
-                                memory.reflection_prompt
-                              )}
-                            </p>
-
-                          </div>`
-                        : ''
-                    }
-
-                  </article>
-                `
-              })
-              .join('')}
+                    </article>
+                  `
+                })
+                .join('')
+            }
 
           </div>`
         : `<section class="card empty-memory">
@@ -1200,12 +1141,13 @@ async function memoriesView() {
             </div>
 
             <h3>
-              Your Memory Bank is waiting.
+              Your memories will live here.
             </h3>
 
             <p>
-              When an answered prayer teaches you something
-              you want to remember, save the reflection here.
+              When an answered prayer gives you a lesson,
+              revelation, or moment you want to remember,
+              save it as a Memory.
             </p>
 
             <button
@@ -1221,109 +1163,179 @@ async function memoriesView() {
   </main>`
 }
 
-/* =========================================================
-   EDIT REFLECTION
-========================================================= */
+/* ---------------- MEMORY DETAIL / EDIT ---------------- */
 
-function editReflectionView(reflection) {
+function memoryDetailView(memory) {
+  const prayer =
+    memory.prayer_requests
+
+  const title =
+    memory.memory_title ||
+    prayer?.title ||
+    'A memory of His faithfulness'
+
   return `<main>
 
     <div class="section-title">
 
       <p class="eyebrow">
-        EDIT REFLECTION
+        MY MEMORY
       </p>
 
       <h2>
-        Keep learning from what God has done.
+        ${esc(title)}
       </h2>
 
       <p class="muted">
-        Your reflection can grow as your understanding grows.
-        The original prayer and answer remain part of your story.
+        A reminder of what God has done
+        and what you learned through it.
       </p>
 
     </div>
 
     <section class="card">
 
-      <p class="eyebrow">
-        ANSWERED PRAYER
-      </p>
+      <div class="memory-top">
+
+        <span class="pill">
+          ${esc(
+            memory.memory_category ||
+            'Faith'
+          )}
+        </span>
+
+        <small>
+          Saved ${esc(
+            formatDate(
+              memory.created_at
+            )
+          )}
+        </small>
+
+      </div>
 
       <h3>
-        ${esc(
-          reflection.prayer_requests?.title ||
-          'Answered prayer'
-        )}
+        Your reflection
       </h3>
 
-      ${
-        reflection.prayer_requests?.answer_note
-          ? `<div class="scripture">
-
-              <p class="eyebrow">
-                WHAT HAPPENED
-              </p>
-
-              <p>
-                ${esc(
-                  reflection
-                    .prayer_requests
-                    .answer_note
-                )}
-              </p>
-
-            </div>`
-          : ''
-      }
+      <p class="memory-full">
+        ${esc(memory.reflection_text)}
+      </p>
 
     </section>
 
-    <section class="card">
+    ${
+      prayer
+        ? `<section class="card">
 
-      <form id="editReflectionForm">
+            <p class="eyebrow">
+              THE ANSWERED PRAYER
+            </p>
 
-        <label>
+            <h3>
+              ${esc(prayer.title)}
+            </h3>
 
-          Your reflection
-
-          <textarea
-            id="editReflectionText"
-            rows="10"
-            required
-            placeholder="Continue writing what you are learning..."
-          >${esc(
-            reflection.reflection_text
-          )}</textarea>
-
-        </label>
-
-        <label class="memory-choice">
-
-          <input
-            id="editSaveMemory"
-            type="checkbox"
             ${
-              reflection.save_as_memory
-                ? 'checked'
+              prayer.details
+                ? `<p>
+                    ${esc(prayer.details)}
+                  </p>`
                 : ''
             }
+
+            ${
+              prayer.answer_note
+                ? `<div class="scripture">
+
+                    <p class="eyebrow">
+                      WHAT GOD DID
+                    </p>
+
+                    <p>
+                      ${esc(prayer.answer_note)}
+                    </p>
+
+                  </div>`
+                : ''
+            }
+
+          </section>`
+        : ''
+    }
+
+    <section class="card">
+
+      <p class="eyebrow">
+        EDIT MEMORY
+      </p>
+
+      <form id="memoryEditForm">
+
+        <label>
+          Memory title
+
+          <input
+            id="memoryTitle"
+            value="${esc(title)}"
+            placeholder="Give this memory a meaningful title"
           >
+        </label>
 
-          <span>
+        <label>
+          Category
 
-            <strong>
-              ✦ Keep this in my Memory Bank
-            </strong>
+          <select id="memoryCategory">
 
-            <small>
-              You can change this anytime.
-            </small>
+            ${
+              memoryCategories
+                .map(
+                  category =>
+                    `<option
+                      value="${esc(category)}"
+                      ${
+                        memory.memory_category === category
+                          ? 'selected'
+                          : ''
+                      }
+                    >
+                      ${esc(category)}
+                    </option>`
+                )
+                .join('')
+            }
 
-          </span>
+          </select>
 
         </label>
+
+        <label>
+          Reflection
+
+          <textarea
+            id="memoryText"
+            rows="9"
+            required
+          >${esc(memory.reflection_text)}</textarea>
+
+        </label>
+
+        <div class="voice-row">
+
+          <button
+            type="button"
+            class="secondary"
+            id="memoryVoice"
+          >
+            🎙 Voice to text
+          </button>
+
+          <span
+            id="memoryVoiceStatus"
+            class="muted"
+          ></span>
+
+        </div>
 
         <button
           class="primary"
@@ -1335,13 +1347,21 @@ function editReflectionView(reflection) {
         <button
           type="button"
           class="link"
-          id="cancelEditReflection"
+          id="backToMemories"
         >
-          Cancel
+          Back to My Memories
+        </button>
+
+        <button
+          type="button"
+          class="link"
+          id="removeMemory"
+        >
+          Remove from My Memories
         </button>
 
         <p
-          id="editReflectionMsg"
+          id="memoryMsg"
           class="msg"
         ></p>
 
@@ -1352,15 +1372,12 @@ function editReflectionView(reflection) {
   </main>`
 }
 
-/* =========================================================
-   PROFILE
-========================================================= */
+/* ---------------- PROFILE ---------------- */
 
 async function profileView() {
   const name =
     state.profile?.display_name ||
-    state.session.user.email
-      ?.split('@')[0] ||
+    state.session.user.email?.split('@')[0] ||
     'friend'
 
   return `<main>
@@ -1384,15 +1401,13 @@ async function profileView() {
       </p>
 
       <p>
-        ${esc(
-          state.session.user.email
-        )}
+        ${esc(state.session.user.email)}
       </p>
 
       <p class="muted">
-        Your private journal, prayers,
-        reflections, and memories are protected
-        by Supabase Row Level Security.
+        Your private journal, prayers, reflections,
+        and memories are protected by Supabase
+        Row Level Security.
       </p>
 
     </section>
@@ -1400,12 +1415,9 @@ async function profileView() {
   </main>`
 }
 
-/* =========================================================
-   RENDER
-========================================================= */
+/* ---------------- RENDER ---------------- */
 
 async function render() {
-
   if (state.recovery) {
     root.innerHTML =
       recoveryView()
@@ -1428,7 +1440,6 @@ async function render() {
     state.view === 'reflection' &&
     state.reflectionPrayer
   ) {
-
     root.innerHTML =
       shell(
         reflectionView(
@@ -1442,18 +1453,17 @@ async function render() {
   }
 
   if (
-    state.view === 'editReflection' &&
-    state.editingReflection
+    state.view === 'memory' &&
+    state.selectedMemory
   ) {
-
     root.innerHTML =
       shell(
-        editReflectionView(
-          state.editingReflection
+        memoryDetailView(
+          state.selectedMemory
         )
       )
 
-    bindEditReflection()
+    bindMemoryDetail()
 
     return
   }
@@ -1489,12 +1499,9 @@ async function render() {
   bindApp()
 }
 
-/* =========================================================
-   AUTH BINDINGS
-========================================================= */
+/* ---------------- AUTH BINDING ---------------- */
 
 function bindAuth() {
-
   if (state.recoveryMode) {
 
     const form =
@@ -1525,10 +1532,8 @@ function bindAuth() {
         if (
           newPassword.length < 8
         ) {
-
           msg.textContent =
             'Your password must be at least 8 characters.'
-
           return
         }
 
@@ -1536,10 +1541,8 @@ function bindAuth() {
           newPassword !==
           confirmPassword
         ) {
-
           msg.textContent =
             'The passwords do not match.'
-
           return
         }
 
@@ -1555,10 +1558,8 @@ function bindAuth() {
             })
 
           if (error) {
-
             msg.textContent =
               `Password could not be updated: ${error.message}`
-
             return
           }
 
@@ -1621,14 +1622,19 @@ function bindAuth() {
       e.preventDefault()
 
       const email =
-        document.getElementById(
-          'email'
-        ).value.trim()
+        document
+          .getElementById(
+            'email'
+          )
+          .value
+          .trim()
 
       const password =
-        document.getElementById(
-          'password'
-        ).value
+        document
+          .getElementById(
+            'password'
+          )
+          .value
 
       const msg =
         document.getElementById(
@@ -1641,14 +1647,11 @@ function bindAuth() {
       try {
 
         const result =
-          state.authMode ===
-          'signup'
-
+          state.authMode === 'signup'
             ? await supabase.auth.signUp({
                 email,
                 password
               })
-
             : await supabase.auth.signInWithPassword({
                 email,
                 password
@@ -1664,26 +1667,19 @@ function bindAuth() {
             /invalid login credentials/i.test(
               raw
             )
-
               ? 'The email or password is incorrect. Try again or use Forgot your password.'
-
               : /email not confirmed/i.test(
                   raw
                 )
-
                 ? 'Please confirm your email address before signing in.'
-
                 : raw
 
           return
         }
 
         msg.textContent =
-          state.authMode ===
-          'signup'
-
+          state.authMode === 'signup'
             ? 'Check your email to confirm your account.'
-
             : 'Welcome back.'
 
       } catch (error) {
@@ -1740,9 +1736,7 @@ function bindAuth() {
 
         msg.textContent =
           result.error
-
             ? `Password reset could not be sent: ${result.error.message}`
-
             : 'Password reset instructions were sent. Check your email.'
 
       } catch (error) {
@@ -1756,12 +1750,9 @@ function bindAuth() {
     }
 }
 
-/* =========================================================
-   RECOVERY
-========================================================= */
+/* ---------------- RECOVERY ---------------- */
 
 function bindRecovery() {
-
   document.getElementById(
     'recoveryForm'
   ).onsubmit =
@@ -1788,20 +1779,16 @@ function bindRecovery() {
         newPassword !==
         confirmPassword
       ) {
-
         msg.textContent =
           'The passwords do not match.'
-
         return
       }
 
       if (
         newPassword.length < 8
       ) {
-
         msg.textContent =
           'Your password must be at least 8 characters.'
-
         return
       }
 
@@ -1817,10 +1804,8 @@ function bindRecovery() {
           })
 
         if (error) {
-
           msg.textContent =
             `Password could not be updated: ${error.message}`
-
           return
         }
 
@@ -1858,16 +1843,13 @@ function bindRecovery() {
     }
 }
 
-/* =========================================================
-   VOICE TO TEXT
-========================================================= */
+/* ---------------- VOICE ---------------- */
 
 function startVoiceToText(
   buttonId,
   textareaId,
   statusId
 ) {
-
   const button =
     document.getElementById(
       buttonId
@@ -1956,9 +1938,7 @@ function startVoiceToText(
       status.textContent =
         event.error ===
         'not-allowed'
-
           ? 'Microphone permission was denied.'
-
           : 'Voice typing could not start.'
     }
 
@@ -1972,7 +1952,6 @@ function startVoiceToText(
         status.textContent ===
         'Speak naturally.'
       ) {
-
         status.textContent =
           'Voice entry complete.'
       }
@@ -1984,13 +1963,16 @@ function startVoiceToText(
       status.textContent =
         ''
 
-      recognition.start()
+      try {
+        recognition.start()
+      } catch {
+        status.textContent =
+          'Voice typing is already active.'
+      }
     }
 }
 
-/* =========================================================
-   APP BINDINGS
-========================================================= */
+/* ---------------- APP BINDING ---------------- */
 
 function bindApp() {
 
@@ -2005,6 +1987,9 @@ function bindApp() {
 
           state.view =
             button.dataset.view
+
+          state.selectedMemory =
+            null
 
           render()
         }
@@ -2029,7 +2014,7 @@ function bindApp() {
         state.reflectionPrayer =
           null
 
-        state.editingReflection =
+        state.selectedMemory =
           null
 
         render()
@@ -2149,7 +2134,7 @@ function bindApp() {
       }
     )
 
-  /* ANSWER PRAYER */
+  /* ANSWERED PRAYER */
 
   document
     .querySelectorAll(
@@ -2213,7 +2198,7 @@ function bindApp() {
         }
     })
 
-  /* OPEN REFLECTION */
+  /* REFLECTION */
 
   document
     .querySelectorAll(
@@ -2261,22 +2246,19 @@ function bindApp() {
         }
     })
 
-  /* OPEN MEMORY EDIT */
+  /* MEMORY DETAIL */
 
   document
     .querySelectorAll(
-      '[data-edit-memory]'
+      '[data-memory]'
     )
     .forEach(button => {
 
       button.onclick =
         async () => {
 
-          const reflectionId =
-            button.dataset.editMemory
-
           const {
-            data: reflection,
+            data: memory,
             error
           } =
             await supabase
@@ -2286,36 +2268,38 @@ function bindApp() {
               .select(`
                 *,
                 prayer_requests (
+                  id,
                   title,
                   details,
                   answer_note,
-                  answered_at
+                  answered_at,
+                  category
                 )
               `)
               .eq(
                 'id',
-                reflectionId
+                button.dataset.memory
               )
               .eq(
-                'user_id',
-                state.session.user.id
+                'is_memory',
+                true
               )
               .single()
 
           if (error) {
 
             alert(
-              `Unable to open this reflection: ${error.message}`
+              `Unable to open this memory: ${error.message}`
             )
 
             return
           }
 
-          state.editingReflection =
-            reflection
+          state.selectedMemory =
+            memory
 
           state.view =
-            'editReflection'
+            'memory'
 
           render()
         }
@@ -2334,9 +2318,7 @@ function bindApp() {
   )
 }
 
-/* =========================================================
-   REFLECTION BINDINGS
-========================================================= */
+/* ---------------- REFLECTION BINDING ---------------- */
 
 function bindReflection() {
 
@@ -2405,225 +2387,66 @@ function bindReflection() {
         const prompt =
           `What do you want to remember about how God answered "${prayer.title}"?`
 
-        const {
-          data: existingReflection
-        } =
+        const memoryTitle =
+          `God answered: ${prayer.title}`
+
+        const memoryCategory =
+          prayer.category ||
+          'Answered Prayer'
+
+        const { error } =
           await supabase
             .from(
               'prayer_reflections'
             )
-            .select('*')
-            .eq(
-              'prayer_request_id',
-              prayer.id
-            )
-            .eq(
-              'user_id',
-              state.session.user.id
-            )
-            .order(
-              'created_at',
-              {
-                ascending: false
-              }
-            )
-            .limit(1)
-            .maybeSingle()
+            .insert({
 
-        let result
+              user_id:
+                state.session.user.id,
 
-        if (existingReflection) {
+              prayer_request_id:
+                prayer.id,
 
-          result =
-            await supabase
-              .from(
-                'prayer_reflections'
-              )
-              .update({
+              reflection_prompt:
+                prompt,
 
-                reflection_prompt:
-                  prompt,
+              reflection_text:
+                text,
 
-                reflection_text:
-                  text,
+              save_as_memory:
+                saveAsMemory,
 
-                save_as_memory:
-                  saveAsMemory
+              is_memory:
+                saveAsMemory,
 
-              })
-              .eq(
-                'id',
-                existingReflection.id
-              )
+              memory_title:
+                saveAsMemory
+                  ? memoryTitle
+                  : null,
 
-        } else {
+              memory_category:
+                saveAsMemory
+                  ? memoryCategory
+                  : null
+            })
 
-          result =
-            await supabase
-              .from(
-                'prayer_reflections'
-              )
-              .insert({
-
-                user_id:
-                  state.session.user.id,
-
-                prayer_request_id:
-                  prayer.id,
-
-                reflection_prompt:
-                  prompt,
-
-                reflection_text:
-                  text,
-
-                save_as_memory:
-                  saveAsMemory
-              })
-        }
-
-        if (result.error) {
+        if (error) {
 
           msg.textContent =
-            `Your reflection could not be saved: ${result.error.message}`
+            `Your reflection could not be saved: ${error.message}`
 
           return
         }
 
         msg.textContent =
           saveAsMemory
-
-            ? 'Your reflection was saved to your Memory Bank.'
-
+            ? 'Your reflection was saved to My Memories.'
             : 'Your reflection was saved.'
 
         setTimeout(
           () => {
 
             state.reflectionPrayer =
-              null
-
-            state.view =
-              'prayers'
-
-            render()
-
-          },
-          900
-        )
-      }
-    )
-}
-
-/* =========================================================
-   EDIT REFLECTION BINDINGS
-========================================================= */
-
-function bindEditReflection() {
-
-  document
-    .getElementById(
-      'cancelEditReflection'
-    )
-    ?.addEventListener(
-      'click',
-      () => {
-
-        state.editingReflection =
-          null
-
-        state.view =
-          'memories'
-
-        render()
-      }
-    )
-
-  document
-    .getElementById(
-      'editReflectionForm'
-    )
-    ?.addEventListener(
-      'submit',
-      async e => {
-
-        e.preventDefault()
-
-        const text =
-          document
-            .getElementById(
-              'editReflectionText'
-            )
-            .value
-            .trim()
-
-        const saveAsMemory =
-          document
-            .getElementById(
-              'editSaveMemory'
-            )
-            .checked
-
-        const msg =
-          document.getElementById(
-            'editReflectionMsg'
-          )
-
-        if (!text) {
-
-          msg.textContent =
-            'Your reflection cannot be empty.'
-
-          return
-        }
-
-        msg.textContent =
-          'Saving your changes…'
-
-        const {
-          error
-        } =
-          await supabase
-            .from(
-              'prayer_reflections'
-            )
-            .update({
-
-              reflection_text:
-                text,
-
-              save_as_memory:
-                saveAsMemory
-
-            })
-            .eq(
-              'id',
-              state.editingReflection.id
-            )
-            .eq(
-              'user_id',
-              state.session.user.id
-            )
-
-        if (error) {
-
-          msg.textContent =
-            `Your reflection could not be updated: ${error.message}`
-
-          return
-        }
-
-        msg.textContent =
-          saveAsMemory
-
-            ? 'Your reflection was updated and remains in your Memory Bank.'
-
-            : 'Your reflection was updated.'
-
-        setTimeout(
-          () => {
-
-            state.editingReflection =
               null
 
             state.view =
@@ -2640,9 +2463,216 @@ function bindEditReflection() {
     )
 }
 
-/* =========================================================
-   AUTH STATE
-========================================================= */
+/* ---------------- MEMORY DETAIL BINDING ---------------- */
+
+function bindMemoryDetail() {
+
+  startVoiceToText(
+    'memoryVoice',
+    'memoryText',
+    'memoryVoiceStatus'
+  )
+
+  document
+    .getElementById(
+      'backToMemories'
+    )
+    ?.addEventListener(
+      'click',
+      () => {
+
+        state.selectedMemory =
+          null
+
+        state.view =
+          'memories'
+
+        render()
+      }
+    )
+
+  document
+    .getElementById(
+      'memoryEditForm'
+    )
+    ?.addEventListener(
+      'submit',
+      async e => {
+
+        e.preventDefault()
+
+        const msg =
+          document.getElementById(
+            'memoryMsg'
+          )
+
+        const title =
+          document
+            .getElementById(
+              'memoryTitle'
+            )
+            .value
+            .trim()
+
+        const category =
+          document
+            .getElementById(
+              'memoryCategory'
+            )
+            .value
+
+        const text =
+          document
+            .getElementById(
+              'memoryText'
+            )
+            .value
+            .trim()
+
+        if (!title) {
+
+          msg.textContent =
+            'Please give this memory a title.'
+
+          return
+        }
+
+        if (!text) {
+
+          msg.textContent =
+            'Your reflection cannot be empty.'
+
+          return
+        }
+
+        msg.textContent =
+          'Saving your changes…'
+
+        const {
+          data: updatedMemory,
+          error
+        } =
+          await supabase
+            .from(
+              'prayer_reflections'
+            )
+            .update({
+
+              memory_title:
+                title,
+
+              memory_category:
+                category,
+
+              reflection_text:
+                text,
+
+              is_memory:
+                true,
+
+              save_as_memory:
+                true
+
+            })
+            .eq(
+              'id',
+              state.selectedMemory.id
+            )
+            .select(`
+              *,
+              prayer_requests (
+                id,
+                title,
+                details,
+                answer_note,
+                answered_at,
+                category
+              )
+            `)
+            .single()
+
+        if (error) {
+
+          msg.textContent =
+            `Your memory could not be updated: ${error.message}`
+
+          return
+        }
+
+        state.selectedMemory =
+          updatedMemory
+
+        msg.textContent =
+          'Your memory has been updated.'
+
+        setTimeout(
+          () => {
+            render()
+          },
+          700
+        )
+      }
+    )
+
+  document
+    .getElementById(
+      'removeMemory'
+    )
+    ?.addEventListener(
+      'click',
+      async () => {
+
+        const confirmed =
+          window.confirm(
+            'Remove this reflection from My Memories? Your reflection will remain saved and will not be deleted.'
+          )
+
+        if (!confirmed) {
+          return
+        }
+
+        const {
+          error
+        } =
+          await supabase
+            .from(
+              'prayer_reflections'
+            )
+            .update({
+
+              is_memory:
+                false,
+
+              save_as_memory:
+                false
+
+            })
+            .eq(
+              'id',
+              state.selectedMemory.id
+            )
+
+        if (error) {
+
+          alert(
+            `The memory could not be removed: ${error.message}`
+          )
+
+          return
+        }
+
+        state.selectedMemory =
+          null
+
+        state.view =
+          'memories'
+
+        render()
+      }
+    )
+}
+
+/* ---------------- AUTH STATE ---------------- */
 
 supabase.auth.onAuthStateChange(
   async (
@@ -2688,7 +2718,7 @@ supabase.auth.onAuthStateChange(
       state.reflectionPrayer =
         null
 
-      state.editingReflection =
+      state.selectedMemory =
         null
     }
 
