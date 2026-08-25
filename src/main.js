@@ -666,14 +666,36 @@ async function prayersView() {
 
         </label>
 
-        <label>
-          Details
-          <textarea
-            id="pdetails"
-            rows="4"
-            placeholder="Add context..."
-          ></textarea>
-        </label>
+       <label>
+  Details
+
+  <div class="voice-field">
+
+    <textarea
+      id="pdetails"
+      rows="5"
+      placeholder="Add context or tell Him more..."
+    ></textarea>
+
+    <button
+      type="button"
+      class="voice-button"
+      id="prayerVoiceButton"
+      title="Use voice to text"
+    >
+      🎙
+      <span>Speak</span>
+    </button>
+
+  </div>
+
+  <span
+    class="voice-status"
+    id="prayerVoiceStatus"
+    aria-live="polite"
+  ></span>
+
+</label>
 
         <button class="primary" type="submit">
           Add prayer
@@ -1363,6 +1385,11 @@ document
       }
     )
 
+  setupVoiceInput(
+  'prayerVoiceButton',
+  'pdetails',
+  'prayerVoiceStatus'
+)
   document
     .getElementById('prayerForm')
     ?.addEventListener(
