@@ -24,7 +24,8 @@ const state = {
   profile: null,
   content: null,
   authMode: 'login',
-  recoveryMode: false
+  recoveryMode: false,
+  reflectionPrayer: null
 }
 
 const prayerCategories = [
@@ -87,22 +88,6 @@ function esc(s = '') {
       "'": '&#039;'
     }[c])
   )
-}
-
-function formatDate(dateValue) {
-  if (!dateValue) return ''
-
-  const date = new Date(dateValue)
-
-  if (Number.isNaN(date.getTime())) {
-    return esc(dateValue)
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  })
 }
 
 function authView() {
@@ -384,29 +369,6 @@ async function homeView() {
           </section>`
     }
 
-    ${
-      c?.reflection_prompt
-        ? `<section class="card">
-
-            <p class="eyebrow">
-              TODAY'S REFLECTION
-            </p>
-
-            <h3>
-              ${esc(c.reflection_prompt)}
-            </h3>
-
-            <button
-              class="secondary"
-              data-view="journal"
-            >
-              Reflect in your journal
-            </button>
-
-          </section>`
-        : ''
-    }
-
     <section class="grid">
 
       <div class="card">
@@ -456,9 +418,7 @@ async function homeView() {
 }
 
 async function journalView() {
-  const {
-    data: entries = []
-  } = await supabase
+  const { data: entries = [] } = await supabase
     .from('journal_entries')
     .select('*')
     .order('entry_date', {
@@ -484,23 +444,20 @@ async function journalView() {
 
     ${
       c?.reflection_prompt
-        ? `<section class="scripture">
+        ? `<section class="card">
 
             <p class="eyebrow">
               TODAY'S REFLECTION
             </p>
 
-            <blockquote>
+            <h3>
               ${esc(c.reflection_prompt)}
-            </blockquote>
+            </h3>
 
-            ${
-              c.theme
-                ? `<strong>
-                    ${esc(c.theme)}
-                  </strong>`
-                : ''
-            }
+            <p class="muted">
+              Let this question guide your reflection,
+              or simply write what is on your heart.
+            </p>
 
           </section>`
         : ''
@@ -528,15 +485,25 @@ async function journalView() {
             required
             placeholder="Write freely..."
           ></textarea>
+
         </label>
 
-        <button
-          type="button"
-          class="secondary"
-          id="journalVoice"
-        >
-          🎙 Speak your entry
-        </button>
+        <div class="voice-row">
+
+          <button
+            type="button"
+            class="secondary"
+            id="journalVoice"
+          >
+            🎙 Voice to text
+          </button>
+
+          <span
+            id="journalVoiceStatus"
+            class="muted"
+          ></span>
+
+        </div>
 
         <button
           class="primary"
@@ -544,12 +511,6 @@ async function journalView() {
         >
           Save entry
         </button>
-
-        <p
-          id="journalVoiceMsg"
-          class="msg"
-          aria-live="polite"
-        ></p>
 
         <p
           id="journalMsg"
@@ -567,7 +528,7 @@ async function journalView() {
           <article class="entry">
 
             <small>
-              ${formatDate(e.entry_date)}
+              ${esc(e.entry_date)}
             </small>
 
             <h3>
@@ -578,9 +539,7 @@ async function journalView() {
             </h3>
 
             <p>
-              ${esc(
-                e.body || ''
-              ).slice(0, 320)}
+              ${esc(e.body).slice(0, 280)}
             </p>
 
           </article>
@@ -595,74 +554,28 @@ async function journalView() {
 }
 
 async function prayersView() {
-  const {
-    data: prayers = []
-  } = await supabase
+  const { data: prayers = [] } = await supabase
     .from('prayer_requests')
     .select('*')
     .order('updated_at', {
       ascending: false
     })
 
-  const activePrayers =
-    prayers.filter(
-      p => p.status !== 'answered'
-    )
-
-  const answeredPrayers =
-    prayers.filter(
-      p => p.status === 'answered'
-    )
-
   return `<main>
 
     <div class="section-title">
 
       <p class="eyebrow">
-        FAITHFULNESS
+        MY PRAYERS
       </p>
 
       <h2>
-        Look what God has done.
+        Keep bringing it to Him.
       </h2>
-
-      <p>
-        Keep bringing your prayers to Him
-        and remember the moments when He answered.
-      </p>
 
     </div>
 
-    ${
-      answeredPrayers.length
-        ? `<section class="scripture">
-
-            <p class="eyebrow">
-              REMEMBER HIS FAITHFULNESS
-            </p>
-
-            <blockquote>
-              “Give thanks to the Lord, for He is good;
-              His love endures forever.”
-            </blockquote>
-
-            <strong>
-              Psalm 107:1
-            </strong>
-
-          </section>`
-        : ''
-    }
-
     <section class="card">
-
-      <p class="eyebrow">
-        NEW PRAYER
-      </p>
-
-      <h3>
-        Keep bringing it to Him.
-      </h3>
 
       <form id="prayerForm">
 
@@ -683,6 +596,7 @@ async function prayersView() {
             id="pcategory"
             required
           >
+
             ${
               prayerCategories
                 .map(category =>
@@ -692,6 +606,7 @@ async function prayersView() {
                 )
                 .join('')
             }
+
           </select>
 
         </label>
@@ -704,15 +619,25 @@ async function prayersView() {
             rows="4"
             placeholder="Add context..."
           ></textarea>
+
         </label>
 
-        <button
-          class="secondary"
-          type="button"
-          id="prayerVoice"
-        >
-          🎙 Speak your prayer
-        </button>
+        <div class="voice-row">
+
+          <button
+            type="button"
+            class="secondary"
+            id="prayerVoice"
+          >
+            🎙 Voice to text
+          </button>
+
+          <span
+            id="prayerVoiceStatus"
+            class="muted"
+          ></span>
+
+        </div>
 
         <button
           class="primary"
@@ -720,12 +645,6 @@ async function prayersView() {
         >
           Add prayer
         </button>
-
-        <p
-          id="prayerVoiceMsg"
-          class="msg"
-          aria-live="polite"
-        ></p>
 
         <p
           id="prayerMsg"
@@ -736,189 +655,216 @@ async function prayersView() {
 
     </section>
 
-    ${
-      activePrayers.length
-        ? `<section>
+    <div class="list">
 
-            <div class="section-title">
-              <p class="eyebrow">
-                ACTIVE PRAYERS
-              </p>
+      ${
+        prayers.map(p => `
+          <article class="entry">
 
-              <h3>
-                Still believing.
-              </h3>
-            </div>
+            <div class="row">
 
-            <div class="list">
+              <div>
+
+                <span class="pill ${esc(p.status)}">
+                  ${esc(p.status)}
+                </span>
+
+                ${
+                  p.category
+                    ? `<span class="pill">
+                        ${esc(p.category)}
+                      </span>`
+                    : ''
+                }
+
+              </div>
 
               ${
-                activePrayers.map(p => `
-                  <article class="entry">
-
-                    <div class="row">
-
-                      <span class="pill">
-                        ${esc(p.status || 'active')}
-                      </span>
-
-                      ${
-                        p.category
-                          ? `<span class="pill">
-                              ${esc(p.category)}
-                            </span>`
-                          : ''
-                      }
-
-                    </div>
-
-                    <h3>
-                      ${esc(p.title)}
-                    </h3>
-
-                    ${
-                      p.details
-                        ? `<p>
-                            ${esc(p.details)}
-                          </p>`
-                        : ''
-                    }
-
-                    <button
+                p.status === 'active'
+                  ? `<button
                       class="small"
                       data-answer="${esc(p.id)}"
                     >
                       Mark answered
-                    </button>
-
-                  </article>
-                `).join('')
+                    </button>`
+                  : ''
               }
 
             </div>
-
-          </section>`
-        : `<section class="card">
-
-            <p class="muted">
-              You don't have any active prayer requests right now.
-            </p>
-
-          </section>`
-    }
-
-    ${
-      answeredPrayers.length
-        ? `<section>
-
-            <div class="section-title">
-
-              <p class="eyebrow">
-                ANSWERED PRAYERS
-              </p>
-
-              <h3>
-                Remember what He has done.
-              </h3>
-
-            </div>
-
-            <div class="list">
-
-              ${
-                answeredPrayers.map(p => `
-                  <article class="entry">
-
-                    <div class="row">
-
-                      <span class="pill answered">
-                        Answered
-                      </span>
-
-                      ${
-                        p.category
-                          ? `<span class="pill">
-                              ${esc(p.category)}
-                            </span>`
-                          : ''
-                      }
-
-                    </div>
-
-                    <h3>
-                      ${esc(p.title)}
-                    </h3>
-
-                    ${
-                      p.details
-                        ? `<p>
-                            ${esc(p.details)}
-                          </p>`
-                        : ''
-                    }
-
-                    ${
-                      p.answered_at
-                        ? `<small class="muted">
-                            Answered ${formatDate(p.answered_at)}
-                          </small>`
-                        : ''
-                    }
-
-                    ${
-                      p.answer_note
-                        ? `<div class="card">
-
-                            <p class="eyebrow">
-                              HOW GOD ANSWERED
-                            </p>
-
-                            <p>
-                              ${esc(p.answer_note)}
-                            </p>
-
-                          </div>`
-                        : ''
-                    }
-
-                    <div class="card">
-
-                      <p class="eyebrow">
-                        REFLECT
-                      </p>
-
-                      <p>
-                        What did this prayer teach you
-                        about God's faithfulness?
-                      </p>
-
-                    </div>
-
-                  </article>
-                `).join('')
-              }
-
-            </div>
-
-          </section>`
-        : `<section class="card">
-
-            <p class="eyebrow">
-              YOUR FAITHFULNESS JOURNAL
-            </p>
 
             <h3>
-              Your answered prayers will live here.
+              ${esc(p.title)}
             </h3>
 
             <p>
-              When you mark a prayer as answered,
-              you'll be able to return here and remember
-              what God has done.
+              ${esc(p.details || '')}
             </p>
 
-          </section>`
-    }
+            ${
+              p.answer_note
+                ? `<div class="answer-block">
+
+                    <p>
+                      <strong>
+                        Answer:
+                      </strong>
+
+                      ${esc(p.answer_note)}
+                    </p>
+
+                    <button
+                      type="button"
+                      class="secondary"
+                      data-reflect="${esc(p.id)}"
+                    >
+                      Reflect on this answer
+                    </button>
+
+                  </div>`
+                : ''
+            }
+
+          </article>
+        `).join('')
+        ||
+        '<p class="muted">No prayer requests yet.</p>'
+      }
+
+    </div>
+
+  </main>`
+}
+
+function reflectionView(prayer) {
+  const suggestedPrompt =
+    `What do you want to remember about how God answered "${prayer.title}"?`
+
+  return `<main>
+
+    <div class="section-title">
+
+      <p class="eyebrow">
+        REMEMBER HIS FAITHFULNESS
+      </p>
+
+      <h2>
+        Hold onto what God has done.
+      </h2>
+
+      <p class="muted">
+        Take a moment to reflect on this answered prayer.
+        You can use the prompt below or simply write what
+        is on your heart.
+      </p>
+
+    </div>
+
+    <section class="card">
+
+      <p class="eyebrow">
+        ANSWERED PRAYER
+      </p>
+
+      <h3>
+        ${esc(prayer.title)}
+      </h3>
+
+      ${
+        prayer.details
+          ? `<p>
+              ${esc(prayer.details)}
+            </p>`
+          : ''
+      }
+
+      ${
+        prayer.answer_note
+          ? `<div class="scripture">
+
+              <p class="eyebrow">
+                WHAT HAPPENED
+              </p>
+
+              <p>
+                ${esc(prayer.answer_note)}
+              </p>
+
+            </div>`
+          : ''
+      }
+
+    </section>
+
+    <section class="card">
+
+      <p class="eyebrow">
+        A THOUGHT TO CONSIDER
+      </p>
+
+      <h3>
+        ${esc(suggestedPrompt)}
+      </h3>
+
+      <p class="muted">
+        This is only a suggestion. Your reflection can
+        be completely different.
+      </p>
+
+    </section>
+
+    <section class="card">
+
+      <form id="reflectionForm">
+
+        <label>
+
+          Your personal reflection
+
+          <textarea
+            id="reflectionText"
+            rows="8"
+            placeholder="What did you learn? What did God reveal to you? What do you want to remember?"
+          ></textarea>
+
+        </label>
+
+        <label class="checkbox-row">
+
+          <input
+            id="saveMemory"
+            type="checkbox"
+            checked
+          >
+
+          <span>
+            Save this as a memory / lesson learned
+          </span>
+
+        </label>
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Save reflection
+        </button>
+
+        <button
+          type="button"
+          class="link"
+          id="cancelReflection"
+        >
+          Cancel
+        </button>
+
+        <p
+          id="reflectionMsg"
+          class="msg"
+        ></p>
+
+      </form>
+
+    </section>
 
   </main>`
 }
@@ -976,6 +922,19 @@ async function render() {
     return
   }
 
+  if (state.view === 'reflection' && state.reflectionPrayer) {
+    root.innerHTML =
+      shell(
+        reflectionView(
+          state.reflectionPrayer
+        )
+      )
+
+    bindReflection()
+
+    return
+  }
+
   let content =
     state.view === 'journal'
       ? await journalView()
@@ -985,281 +944,359 @@ async function render() {
           ? await profileView()
           : await homeView()
 
-  root.innerHTML = shell(content)
+  root.innerHTML =
+    shell(content)
 
   bindApp()
 }
 
 function bindAuth() {
   if (state.recoveryMode) {
+
     const form =
-      document.getElementById('recoveryForm')
+      document.getElementById(
+        'recoveryForm'
+      )
 
-    form.onsubmit = async e => {
-      e.preventDefault()
+    form.onsubmit =
+      async e => {
 
-      const newPassword =
-        document.getElementById('newPassword').value
+        e.preventDefault()
 
-      const confirmPassword =
-        document.getElementById('confirmPassword').value
+        const newPassword =
+          document.getElementById(
+            'newPassword'
+          ).value
 
-      const msg =
-        document.getElementById('recoveryMsg')
+        const confirmPassword =
+          document.getElementById(
+            'confirmPassword'
+          ).value
 
-      if (newPassword.length < 8) {
-        msg.textContent =
-          'Your password must be at least 8 characters.'
-        return
-      }
+        const msg =
+          document.getElementById(
+            'recoveryMsg'
+          )
 
-      if (newPassword !== confirmPassword) {
-        msg.textContent =
-          'The passwords do not match.'
-        return
-      }
-
-      msg.textContent =
-        'Saving your new password…'
-
-      try {
-        const { error } =
-          await supabase.auth.updateUser({
-            password: newPassword
-          })
-
-        if (error) {
+        if (newPassword.length < 8) {
           msg.textContent =
-            `Password could not be updated: ${error.message}`
+            'Your password must be at least 8 characters.'
+          return
+        }
+
+        if (
+          newPassword !==
+          confirmPassword
+        ) {
+          msg.textContent =
+            'The passwords do not match.'
           return
         }
 
         msg.textContent =
-          'Password updated successfully. Welcome back!'
+          'Saving your new password…'
 
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname +
-            window.location.search
-        )
+        try {
 
-        state.recoveryMode = false
-        state.view = 'home'
+          const { error } =
+            await supabase.auth.updateUser({
+              password: newPassword
+            })
 
-        await loadSession()
+          if (error) {
+            msg.textContent =
+              `Password could not be updated: ${error.message}`
+            return
+          }
 
-      } catch (error) {
-        msg.textContent =
-          `Password could not be updated: ${
-            error?.message ||
-            'Please try again.'
-          }`
+          msg.textContent =
+            'Password updated successfully. Welcome back!'
+
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname +
+              window.location.search
+          )
+
+          state.recoveryMode =
+            false
+
+          state.view =
+            'home'
+
+          await loadSession()
+
+        } catch (error) {
+
+          msg.textContent =
+            `Password could not be updated: ${
+              error?.message ||
+              'Please try again.'
+            }`
+        }
       }
-    }
 
     return
   }
 
-  document.getElementById('loginTab').onclick =
-    () => {
-      state.authMode = 'login'
-      render()
-    }
+  document.getElementById(
+    'loginTab'
+  ).onclick = () => {
 
-  document.getElementById('signupTab').onclick =
-    () => {
-      state.authMode = 'signup'
-      render()
-    }
+    state.authMode =
+      'login'
 
-  document.getElementById('authForm').onsubmit =
-    async e => {
-      e.preventDefault()
+    render()
+  }
 
-      const email =
-        document.getElementById('email')
-          .value
-          .trim()
+  document.getElementById(
+    'signupTab'
+  ).onclick = () => {
 
-      const password =
-        document.getElementById('password')
-          .value
+    state.authMode =
+      'signup'
 
-      const msg =
-        document.getElementById('authMsg')
+    render()
+  }
 
-      msg.textContent =
-        'Please wait…'
+  document.getElementById(
+    'authForm'
+  ).onsubmit = async e => {
 
-      try {
-        const result =
-          state.authMode === 'signup'
-            ? await supabase.auth.signUp({
-                email,
-                password
-              })
-            : await supabase.auth.signInWithPassword({
-                email,
-                password
-              })
+    e.preventDefault()
 
-        if (result.error) {
-          const raw =
-            result.error.message ||
-            'Authentication failed.'
+    const email =
+      document.getElementById(
+        'email'
+      ).value.trim()
 
-          msg.textContent =
-            /invalid login credentials/i.test(raw)
-              ? 'The email or password is incorrect. Try again or use Forgot your password.'
-              : /email not confirmed/i.test(raw)
-                ? 'Please confirm your email address before signing in.'
-                : raw
+    const password =
+      document.getElementById(
+        'password'
+      ).value
 
-          return
-        }
+    const msg =
+      document.getElementById(
+        'authMsg'
+      )
+
+    msg.textContent =
+      'Please wait…'
+
+    try {
+
+      const result =
+        state.authMode === 'signup'
+          ? await supabase.auth.signUp({
+              email,
+              password
+            })
+          : await supabase.auth.signInWithPassword({
+              email,
+              password
+            })
+
+      if (result.error) {
+
+        const raw =
+          result.error.message ||
+          'Authentication failed.'
 
         msg.textContent =
-          state.authMode === 'signup'
-            ? 'Check your email to confirm your account.'
-            : 'Welcome back.'
-
-      } catch (error) {
-        msg.textContent =
-          error?.message ||
-          'Something went wrong. Please try again.'
-      }
-    }
-
-  document.getElementById('reset').onclick =
-    async e => {
-      e.preventDefault()
-
-      const input =
-        document.getElementById('email')
-
-      const msg =
-        document.getElementById('authMsg')
-
-      const email =
-        input.value.trim()
-
-      if (!email) {
-        msg.textContent =
-          'Enter your email address above, then click Forgot your password again.'
-
-        input.focus()
+          /invalid login credentials/i.test(raw)
+            ? 'The email or password is incorrect. Try again or use Forgot your password.'
+            : /email not confirmed/i.test(raw)
+              ? 'Please confirm your email address before signing in.'
+              : raw
 
         return
       }
 
       msg.textContent =
-        'Sending password reset email…'
+        state.authMode === 'signup'
+          ? 'Check your email to confirm your account.'
+          : 'Welcome back.'
 
-      try {
-        const result =
-          await supabase.auth.resetPasswordForEmail(
-            email,
-            {
-              redirectTo:
-                window.location.origin
-            }
-          )
+    } catch (error) {
 
-        msg.textContent =
-          result.error
-            ? `Password reset could not be sent: ${result.error.message}`
-            : 'Password reset instructions were sent. Check your email.'
-
-      } catch (error) {
-        msg.textContent =
-          `Password reset could not be sent: ${
-            error?.message ||
-            'Please try again.'
-          }`
-      }
+      msg.textContent =
+        error?.message ||
+        'Something went wrong. Please try again.'
     }
+  }
+
+  document.getElementById(
+    'reset'
+  ).onclick = async e => {
+
+    e.preventDefault()
+
+    const input =
+      document.getElementById(
+        'email'
+      )
+
+    const msg =
+      document.getElementById(
+        'authMsg'
+      )
+
+    const email =
+      input.value.trim()
+
+    if (!email) {
+
+      msg.textContent =
+        'Enter your email address above, then click Forgot your password again.'
+
+      input.focus()
+
+      return
+    }
+
+    msg.textContent =
+      'Sending password reset email…'
+
+    try {
+
+      const result =
+        await supabase.auth.resetPasswordForEmail(
+          email,
+          {
+            redirectTo:
+              window.location.origin
+          }
+        )
+
+      msg.textContent =
+        result.error
+          ? `Password reset could not be sent: ${result.error.message}`
+          : 'Password reset instructions were sent. Check your email.'
+
+    } catch (error) {
+
+      msg.textContent =
+        `Password reset could not be sent: ${
+          error?.message ||
+          'Please try again.'
+        }`
+    }
+  }
 }
 
 function bindRecovery() {
-  document.getElementById('recoveryForm').onsubmit =
-    async e => {
-      e.preventDefault()
+  document.getElementById(
+    'recoveryForm'
+  ).onsubmit = async e => {
 
-      const newPassword =
-        document.getElementById('newPassword').value
+    e.preventDefault()
 
-      const confirmPassword =
-        document.getElementById('confirmPassword').value
+    const newPassword =
+      document.getElementById(
+        'newPassword'
+      ).value
 
-      const msg =
-        document.getElementById('recoveryMsg')
+    const confirmPassword =
+      document.getElementById(
+        'confirmPassword'
+      ).value
 
-      if (newPassword !== confirmPassword) {
+    const msg =
+      document.getElementById(
+        'recoveryMsg'
+      )
+
+    if (
+      newPassword !==
+      confirmPassword
+    ) {
+      msg.textContent =
+        'The passwords do not match.'
+      return
+    }
+
+    if (newPassword.length < 8) {
+      msg.textContent =
+        'Your password must be at least 8 characters.'
+      return
+    }
+
+    msg.textContent =
+      'Updating your password…'
+
+    try {
+
+      const { error } =
+        await supabase.auth.updateUser({
+          password: newPassword
+        })
+
+      if (error) {
         msg.textContent =
-          'The passwords do not match.'
-        return
-      }
-
-      if (newPassword.length < 8) {
-        msg.textContent =
-          'Your password must be at least 8 characters.'
+          `Password could not be updated: ${error.message}`
         return
       }
 
       msg.textContent =
-        'Updating your password…'
+        'Password updated successfully. You can now sign in.'
 
-      try {
-        const { error } =
-          await supabase.auth.updateUser({
-            password: newPassword
-          })
+      setTimeout(
+        async () => {
 
-        if (error) {
-          msg.textContent =
-            `Password could not be updated: ${error.message}`
-          return
-        }
-
-        msg.textContent =
-          'Password updated successfully. You can now sign in.'
-
-        setTimeout(async () => {
           await supabase.auth.signOut()
 
-          state.session = null
-          state.recovery = false
-          state.authMode = 'login'
+          state.session =
+            null
+
+          state.recovery =
+            false
+
+          state.authMode =
+            'login'
 
           await render()
-        }, 1500)
 
-      } catch (error) {
-        msg.textContent =
-          `Password could not be updated: ${
-            error?.message ||
-            'Please try again.'
-          }`
-      }
+        },
+        1500
+      )
+
+    } catch (error) {
+
+      msg.textContent =
+        `Password could not be updated: ${
+          error?.message ||
+          'Please try again.'
+        }`
     }
+  }
 }
 
-function setupVoiceInput({
+function startVoiceToText(
   buttonId,
-  targetId,
-  messageId
-}) {
+  textareaId,
+  statusId
+) {
   const button =
-    document.getElementById(buttonId)
+    document.getElementById(
+      buttonId
+    )
 
-  const target =
-    document.getElementById(targetId)
+  const textarea =
+    document.getElementById(
+      textareaId
+    )
 
-  const message =
-    document.getElementById(messageId)
+  const status =
+    document.getElementById(
+      statusId
+    )
 
-  if (!button || !target) {
+  if (
+    !button ||
+    !textarea ||
+    !status
+  ) {
     return
   }
 
@@ -1268,12 +1305,11 @@ function setupVoiceInput({
     window.webkitSpeechRecognition
 
   if (!SpeechRecognition) {
+
     button.disabled = true
 
-    if (message) {
-      message.textContent =
-        'Voice-to-text is not supported in this browser.'
-    }
+    status.textContent =
+      'Voice typing is not supported in this browser.'
 
     return
   }
@@ -1281,97 +1317,122 @@ function setupVoiceInput({
   const recognition =
     new SpeechRecognition()
 
-  recognition.lang = 'en-US'
-  recognition.interimResults = false
-  recognition.continuous = false
+  recognition.continuous =
+    false
 
-  button.onclick = () => {
-    try {
-      recognition.start()
+  recognition.interimResults =
+    false
 
+  recognition.lang =
+    'en-US'
+
+  recognition.onstart =
+    () => {
       button.textContent =
         '🎙 Listening…'
 
-      if (message) {
-        message.textContent =
-          'Speak naturally. Your words will appear here.'
+      status.textContent =
+        'Speak naturally.'
+    }
+
+  recognition.onresult =
+    event => {
+
+      const transcript =
+        Array.from(
+          event.results
+        )
+          .map(
+            result =>
+              result[0].transcript
+          )
+          .join(' ')
+
+      const existing =
+        textarea.value.trim()
+
+      textarea.value =
+        existing
+          ? `${existing} ${transcript}`
+          : transcript
+    }
+
+  recognition.onerror =
+    event => {
+
+      status.textContent =
+        event.error === 'not-allowed'
+          ? 'Microphone permission was denied.'
+          : 'Voice typing could not start.'
+    }
+
+  recognition.onend =
+    () => {
+
+      button.textContent =
+        '🎙 Voice to text'
+
+      if (
+        status.textContent ===
+        'Speak naturally.'
+      ) {
+        status.textContent =
+          'Voice entry complete.'
       }
-
-    } catch {
-      if (message) {
-        message.textContent =
-          'Voice input is already active.'
-      }
     }
-  }
 
-  recognition.onresult = event => {
-    const transcript =
-      event.results?.[0]?.[0]?.transcript || ''
+  button.onclick =
+    () => {
 
-    if (!transcript) return
+      status.textContent =
+        ''
 
-    const existing =
-      target.value.trim()
-
-    target.value =
-      existing
-        ? `${existing} ${transcript}`
-        : transcript
-
-    if (message) {
-      message.textContent =
-        'Voice entry added.'
+      recognition.start()
     }
-  }
-
-  recognition.onerror = event => {
-    if (message) {
-      message.textContent =
-        `Voice input could not be completed: ${
-          event.error || 'Please try again.'
-        }`
-    }
-  }
-
-  recognition.onend = () => {
-    button.textContent =
-      buttonId === 'journalVoice'
-        ? '🎙 Speak your entry'
-        : '🎙 Speak your prayer'
-  }
 }
 
 function bindApp() {
 
   document
-    .querySelectorAll('[data-view]')
+    .querySelectorAll(
+      '[data-view]'
+    )
     .forEach(button => {
-      button.onclick = () => {
-        state.view =
-          button.dataset.view
 
-        render()
-      }
+      button.onclick =
+        () => {
+
+          state.view =
+            button.dataset.view
+
+          render()
+        }
     })
 
   document
-    .getElementById('signout')
+    .getElementById(
+      'signout'
+    )
     ?.addEventListener(
       'click',
       async () => {
 
         await supabase.auth.signOut()
 
-        state.session = null
-        state.view = 'home'
+        state.session =
+          null
+
+        state.view =
+          'home'
 
         render()
       }
     )
 
   document
-    .getElementById('journalForm')
+    .getElementById(
+      'journalForm'
+    )
     ?.addEventListener(
       'submit',
       async e => {
@@ -1380,26 +1441,35 @@ function bindApp() {
 
         const r =
           await supabase
-            .from('journal_entries')
+            .from(
+              'journal_entries'
+            )
             .insert({
+
               user_id:
                 state.session.user.id,
 
               title:
                 document
-                  .getElementById('jtitle')
+                  .getElementById(
+                    'jtitle'
+                  )
                   .value
                   .trim(),
 
               body:
                 document
-                  .getElementById('jbody')
+                  .getElementById(
+                    'jbody'
+                  )
                   .value
                   .trim()
             })
 
         document
-          .getElementById('journalMsg')
+          .getElementById(
+            'journalMsg'
+          )
           .textContent =
             r.error?.message ||
             'Saved.'
@@ -1411,7 +1481,9 @@ function bindApp() {
     )
 
   document
-    .getElementById('prayerForm')
+    .getElementById(
+      'prayerForm'
+    )
     ?.addEventListener(
       'submit',
       async e => {
@@ -1420,31 +1492,42 @@ function bindApp() {
 
         const r =
           await supabase
-            .from('prayer_requests')
+            .from(
+              'prayer_requests'
+            )
             .insert({
+
               user_id:
                 state.session.user.id,
 
               title:
                 document
-                  .getElementById('ptitle')
+                  .getElementById(
+                    'ptitle'
+                  )
                   .value
                   .trim(),
 
               category:
                 document
-                  .getElementById('pcategory')
+                  .getElementById(
+                    'pcategory'
+                  )
                   .value,
 
               details:
                 document
-                  .getElementById('pdetails')
+                  .getElementById(
+                    'pdetails'
+                  )
                   .value
                   .trim()
             })
 
         document
-          .getElementById('prayerMsg')
+          .getElementById(
+            'prayerMsg'
+          )
           .textContent =
             r.error?.message ||
             'Prayer saved.'
@@ -1456,71 +1539,245 @@ function bindApp() {
     )
 
   document
-    .querySelectorAll('[data-answer]')
+    .querySelectorAll(
+      '[data-answer]'
+    )
     .forEach(button => {
 
-      button.onclick = async () => {
+      button.onclick =
+        async () => {
 
-        const prayerId =
-          button.dataset.answer
-
-        const prayer =
-          await supabase
-            .from('prayer_requests')
-            .select('*')
-            .eq('id', prayerId)
-            .maybeSingle()
-
-        if (prayer.error) {
-          return
-        }
-
-        const note =
-          window.prompt(
-            'How did God answer this prayer?'
-          )
-
-        if (note === null) {
-          return
-        }
-
-        const trimmedNote =
-          note.trim()
-
-        const r =
-          await supabase
-            .from('prayer_requests')
-            .update({
-              status: 'answered',
-
-              answered_at:
-                new Date().toISOString(),
-
-              answer_note:
-                trimmedNote || null
-            })
-            .eq(
-              'id',
-              prayerId
+          const confirmed =
+            window.confirm(
+              'Mark this prayer as answered?'
             )
 
-        if (!r.error) {
+          if (!confirmed) {
+            return
+          }
+
+          const note =
+            window.prompt(
+              'How did God answer this prayer?'
+            )
+
+          if (note === null) {
+            return
+          }
+
+          const r =
+            await supabase
+              .from(
+                'prayer_requests'
+              )
+              .update({
+
+                status:
+                  'answered',
+
+                answered_at:
+                  new Date().toISOString(),
+
+                answer_note:
+                  note.trim() ||
+                  null
+              })
+              .eq(
+                'id',
+                button.dataset.answer
+              )
+
+          if (r.error) {
+
+            alert(
+              `The prayer could not be updated: ${r.error.message}`
+            )
+
+            return
+          }
+
           render()
         }
-      }
     })
 
-  setupVoiceInput({
-    buttonId: 'journalVoice',
-    targetId: 'jbody',
-    messageId: 'journalVoiceMsg'
-  })
+  document
+    .querySelectorAll(
+      '[data-reflect]'
+    )
+    .forEach(button => {
 
-  setupVoiceInput({
-    buttonId: 'prayerVoice',
-    targetId: 'pdetails',
-    messageId: 'prayerVoiceMsg'
-  })
+      button.onclick =
+        async () => {
+
+          const prayerId =
+            button.dataset.reflect
+
+          const {
+            data: prayer,
+            error
+          } =
+            await supabase
+              .from(
+                'prayer_requests'
+              )
+              .select('*')
+              .eq(
+                'id',
+                prayerId
+              )
+              .single()
+
+          if (error) {
+
+            alert(
+              `Unable to open this reflection: ${error.message}`
+            )
+
+            return
+          }
+
+          state.reflectionPrayer =
+            prayer
+
+          state.view =
+            'reflection'
+
+          render()
+        }
+    })
+
+  startVoiceToText(
+    'journalVoice',
+    'jbody',
+    'journalVoiceStatus'
+  )
+
+  startVoiceToText(
+    'prayerVoice',
+    'pdetails',
+    'prayerVoiceStatus'
+  )
+}
+
+function bindReflection() {
+
+  document
+    .getElementById(
+      'cancelReflection'
+    )
+    ?.addEventListener(
+      'click',
+      () => {
+
+        state.reflectionPrayer =
+          null
+
+        state.view =
+          'prayers'
+
+        render()
+      }
+    )
+
+  document
+    .getElementById(
+      'reflectionForm'
+    )
+    ?.addEventListener(
+      'submit',
+      async e => {
+
+        e.preventDefault()
+
+        const text =
+          document
+            .getElementById(
+              'reflectionText'
+            )
+            .value
+            .trim()
+
+        const saveAsMemory =
+          document
+            .getElementById(
+              'saveMemory'
+            )
+            .checked
+
+        const msg =
+          document.getElementById(
+            'reflectionMsg'
+          )
+
+        if (!text) {
+
+          msg.textContent =
+            'Write a thought or reflection before saving.'
+
+          return
+        }
+
+        msg.textContent =
+          'Saving your reflection…'
+
+        const prayer =
+          state.reflectionPrayer
+
+        const prompt =
+          `What do you want to remember about how God answered "${prayer.title}"?`
+
+        const { error } =
+          await supabase
+            .from(
+              'prayer_reflections'
+            )
+            .insert({
+
+              user_id:
+                state.session.user.id,
+
+              prayer_request_id:
+                prayer.id,
+
+              reflection_prompt:
+                prompt,
+
+              reflection_text:
+                text,
+
+              save_as_memory:
+                saveAsMemory
+            })
+
+        if (error) {
+
+          msg.textContent =
+            `Your reflection could not be saved: ${error.message}`
+
+          return
+        }
+
+        msg.textContent =
+          saveAsMemory
+            ? 'Your reflection was saved as a memory.'
+            : 'Your reflection was saved.'
+
+        setTimeout(
+          () => {
+
+            state.reflectionPrayer =
+              null
+
+            state.view =
+              'prayers'
+
+            render()
+
+          },
+          900
+        )
+      }
+    )
 }
 
 supabase.auth.onAuthStateChange(
@@ -1535,28 +1792,41 @@ supabase.auth.onAuthStateChange(
       event ===
       'PASSWORD_RECOVERY'
     ) {
-      state.session = session
-      state.recovery = true
+
+      state.session =
+        session
+
+      state.recovery =
+        true
 
       await render()
 
       return
     }
 
-    state.session = session
+    state.session =
+      session
 
     if (
       event ===
       'SIGNED_OUT'
     ) {
-      state.recovery = false
-      state.view = 'home'
+
+      state.recovery =
+        false
+
+      state.view =
+        'home'
+
+      state.reflectionPrayer =
+        null
     }
 
     if (
       session &&
       !state.recovery
     ) {
+
       await Promise.all([
         loadProfile(),
         loadToday()
