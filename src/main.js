@@ -436,115 +436,183 @@ function shell(content) {
 async function homeView() {
   const c = state.content
 
-  return `
-    <main>
+  return `<main>
 
-      <div class="welcome">
+    <div class="welcome">
+      <p class="eyebrow">TODAY</p>
+
+      <h2>
+        Come away and be still.
+      </h2>
+
+      <p>
+        ${new Date().toLocaleDateString(undefined, {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric'
+        })}
+      </p>
+    </div>
+
+    ${
+      c
+        ? `
+          <section class="scripture">
+
+            ${
+              c.theme
+                ? `
+                  <p class="eyebrow">
+                    TODAY'S THEME
+                  </p>
+
+                  <h3 class="daily-theme">
+                    ${esc(c.theme)}
+                  </h3>
+                `
+                : ''
+            }
+
+            <p class="eyebrow">
+              TODAY'S SCRIPTURE
+            </p>
+
+            <blockquote>
+              “${esc(c.scripture_text)}”
+            </blockquote>
+
+            <strong>
+              ${esc(c.scripture_reference)}
+            </strong>
+
+          </section>
+
+          <section class="card daily-section">
+
+            <p class="eyebrow">
+              A PRAYER FOR TODAY
+            </p>
+
+            <h3>
+              Bring your heart to Him.
+            </h3>
+
+            <p class="daily-copy">
+              ${esc(c.prayer_prompt)}
+            </p>
+
+          </section>
+
+          ${
+            c.reflection_prompt
+              ? `
+                <section class="card daily-section">
+
+                  <p class="eyebrow">
+                    REFLECT
+                  </p>
+
+                  <h3>
+                    Pause and listen.
+                  </h3>
+
+                  <p class="daily-copy">
+                    ${esc(c.reflection_prompt)}
+                  </p>
+
+                  <button
+                    class="primary"
+                    data-view="journal"
+                  >
+                    Begin journaling
+                  </button>
+
+                </section>
+              `
+              : `
+                <section class="card daily-section">
+
+                  <p class="eyebrow">
+                    PRAYER PROMPT
+                  </p>
+
+                  <h3>
+                    ${esc(
+                      c.prayer_prompt ||
+                      'What is on your heart today?'
+                    )}
+                  </h3>
+
+                  <button
+                    class="primary"
+                    data-view="journal"
+                  >
+                    Start journaling
+                  </button>
+
+                </section>
+              `
+          }
+        `
+        : `
+          <section class="card">
+
+            <h3>
+              Your first daily prayer is coming.
+            </h3>
+
+            <p>
+              Add daily content from your admin library
+              to personalize this screen.
+            </p>
+
+          </section>
+        `
+    }
+
+    <section class="grid">
+
+      <div class="card">
 
         <p class="eyebrow">
-          TODAY
+          JOURNAL
         </p>
 
-        <h2>
-          Come away and be still.
-        </h2>
+        <h3>
+          What is God placing on your heart?
+        </h3>
 
-        <p>
-          ${new Date().toLocaleDateString(
-            undefined,
-            {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric'
-            }
-          )}
-        </p>
+        <button
+          class="primary"
+          data-view="journal"
+        >
+          Open journal
+        </button>
 
       </div>
 
-      ${
-        c
-          ? `
-            <section class="scripture">
+      <div class="card">
 
-              <p class="eyebrow">
-                TODAY'S SCRIPTURE
-              </p>
+        <p class="eyebrow">
+          FAITHFULNESS
+        </p>
 
-              <blockquote>
-                “${esc(c.scripture_text)}”
-              </blockquote>
+        <h3>
+          Remember what God has done.
+        </h3>
 
-              <strong>
-                ${esc(c.scripture_reference)}
-              </strong>
+        <button
+          class="secondary"
+          data-view="prayers"
+        >
+          View answered prayers
+        </button>
 
-            </section>
-          `
-          : `
-            <section class="card">
+      </div>
 
-              <h3>
-                Your first daily prayer is coming.
-              </h3>
+    </section>
 
-              <p>
-                Add daily content from your
-                admin library to personalize
-                this screen.
-              </p>
-
-            </section>
-          `
-      }
-
-      <section class="grid">
-
-        <div class="card">
-
-          <p class="eyebrow">
-            PRAYER PROMPT
-          </p>
-
-          <h3>
-            ${esc(
-              c?.prayer_prompt ||
-              'What is on your heart today?'
-            )}
-          </h3>
-
-          <button
-            class="primary"
-            data-view="journal"
-          >
-            Start journaling
-          </button>
-
-        </div>
-
-        <div class="card">
-
-          <p class="eyebrow">
-            FAITHFULNESS
-          </p>
-
-          <h3>
-            Remember what God has done.
-          </h3>
-
-          <button
-            class="secondary"
-            data-view="prayers"
-          >
-            View answered prayers
-          </button>
-
-        </div>
-
-      </section>
-
-    </main>
-  `
+  </main>`
 }
 
 /* =========================================================
