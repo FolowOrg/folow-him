@@ -32,8 +32,10 @@ const state = {
   authMode: 'login',
   recoveryMode: false,
 
-  reflectionPrayer: null,
+   reflectionPrayer: null,
   editingReflection: null,
+  reflectionReadOnly: false,
+  reflectionReturnView: 'prayers',
 
   selectedMemory: null,
   editingMemory: null,
