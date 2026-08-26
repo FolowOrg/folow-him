@@ -1,68 +1,70 @@
-/* =========================================================
-
-   FOLow HIM — GLOBAL APP EXPERIENCE
-
-   Soft visual system
-
-========================================================= */
-
- 
-
 :root {
 
-  --app-cream: #f7f3eb;
+  --cream: #f7f3ec;
 
-  --app-paper: #fffdfa;
+  --paper: #fffdf9;
 
-  --app-paper-soft: #fbf8f2;
+  --brown: #5d4638;
 
- 
+  --brown-dark: #46352b;
 
-  --app-brown: #624a3b;
+  --brown-soft: #8a6c58;
 
-  --app-brown-dark: #49372d;
+  --olive: #78806a;
 
-  --app-brown-soft: #806a5b;
+  --olive-dark: #626a55;
 
- 
+  --sage: #e8eadf;
 
-  --app-olive: #7b826d;
+  --rose: #c9aaa0;
 
-  --app-olive-dark: #68705a;
+  --line: #e5ddd4;
 
-  --app-sage: #e9ebe1;
+  --muted: #81766d;
 
-  --app-sage-soft: #f0f1e9;
+  --white: #ffffff;
 
- 
-
-  --app-line: rgba(98, 74, 59, .10);
-
-  --app-shadow:
-
-    0 18px 50px rgba(73, 55, 45, .07);
+  --danger: #a15d56;
 
  
 
-  --app-shadow-soft:
+  font-family:
 
-    0 10px 30px rgba(73, 55, 45, .045);
+    Inter,
+
+    ui-sans-serif,
+
+    system-ui,
+
+    -apple-system,
+
+    BlinkMacSystemFont,
+
+    "Segoe UI",
+
+    sans-serif;
+
+ 
+
+  color: var(--brown-dark);
+
+  background: var(--cream);
 
 }
 
  
 
-/* ---------------------------------------------------------
+* {
 
-   GLOBAL BACKGROUND
+  box-sizing: border-box;
 
---------------------------------------------------------- */
+}
 
  
 
 html {
 
-  background: var(--app-cream);
+  min-height: 100%;
 
 }
 
@@ -70,159 +72,153 @@ html {
 
 body {
 
+  margin: 0;
+
+  min-height: 100vh;
+
   background:
 
     radial-gradient(
 
-      circle at 8% 4%,
+      circle at top left,
 
-      rgba(255,255,255,.92),
+      rgba(255,255,255,.85),
 
-      transparent 30%
-
-    ),
-
-    radial-gradient(
-
-      circle at 92% 12%,
-
-      rgba(232,234,223,.50),
-
-      transparent 28%
+      transparent 38%
 
     ),
 
-    linear-gradient(
+    var(--cream);
 
-      180deg,
-
-      #faf7f1 0%,
-
-      var(--app-cream) 100%
-
-    );
-
- 
-
-  color: var(--app-brown-dark);
+  color: var(--brown-dark);
 
 }
 
  
 
-/* ---------------------------------------------------------
+button,
 
-   APP CONTAINER
+input,
 
---------------------------------------------------------- */
+textarea,
 
- 
+select {
 
-.app-shell {
-
-  position: relative;
-
-  width: min(1180px, 100%);
-
-  padding-bottom: 120px;
+  font: inherit;
 
 }
 
  
 
-main {
+button {
 
-  width: min(1040px, 100%);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   HEADER
-
---------------------------------------------------------- */
-
- 
-
-.app-shell > header {
-
-  padding: 24px 0 18px;
+  cursor: pointer;
 
 }
 
  
 
-.brand {
+button:disabled {
 
-  gap: 10px;
+  cursor: not-allowed;
 
-  color: var(--app-brown-dark);
-
-  font-family: Georgia, serif;
-
-  font-size: 1.22rem;
+  opacity: .55;
 
 }
 
  
 
-.brand .leaf {
+input,
 
-  display: grid;
+textarea,
 
-  place-items: center;
+select {
 
-  width: 34px;
+  width: 100%;
 
-  height: 34px;
+  border: 1px solid var(--line);
 
-  border-radius: 50%;
+  border-radius: 14px;
 
-  background: var(--app-sage);
+  background: var(--white);
 
-  color: var(--app-olive-dark);
+  color: var(--brown-dark);
 
-  font-size: 1.15rem;
+  padding: 13px 14px;
 
-}
-
- 
-
-.ghost {
-
-  border-radius: 999px;
-
-  padding: 9px 14px;
-
-  color: var(--app-brown-soft);
+  outline: none;
 
   transition:
 
-    background .18s ease,
+    border-color .18s ease,
 
-    color .18s ease;
-
-}
-
- 
-
-.ghost:hover {
-
-  background: rgba(255,255,255,.65);
-
-  color: var(--app-brown-dark);
+    box-shadow .18s ease;
 
 }
 
  
 
-/* ---------------------------------------------------------
+input:focus,
 
-   TYPOGRAPHY
+textarea:focus,
 
---------------------------------------------------------- */
+select:focus {
+
+  border-color: var(--olive);
+
+  box-shadow:
+
+    0 0 0 3px rgba(120,128,106,.12);
+
+}
+
+ 
+
+textarea {
+
+  resize: vertical;
+
+  line-height: 1.65;
+
+}
+
+ 
+
+label {
+
+  display: block;
+
+  margin-bottom: 18px;
+
+  font-size: .9rem;
+
+  font-weight: 600;
+
+  color: var(--brown);
+
+}
+
+ 
+
+label input,
+
+label textarea,
+
+label select {
+
+  margin-top: 8px;
+
+  font-weight: 400;
+
+}
+
+ 
+
+a {
+
+  color: inherit;
+
+}
 
  
 
@@ -232,7 +228,7 @@ h2,
 
 h3 {
 
-  color: var(--app-brown-dark);
+  color: var(--brown-dark);
 
 }
 
@@ -242,19 +238,37 @@ h1,
 
 h2 {
 
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-weight: 500;
+  letter-spacing: -.02em;
 
 }
 
  
 
-.welcome h2,
+p {
 
-.section-title h2 {
+  line-height: 1.65;
 
-  line-height: 1.08;
+}
+
+ 
+
+.muted {
+
+  color: var(--muted);
+
+}
+
+ 
+
+.msg {
+
+  min-height: 20px;
+
+  margin-top: 12px;
+
+  color: var(--brown-soft);
+
+  font-size: .9rem;
 
 }
 
@@ -262,19 +276,183 @@ h2 {
 
 .eyebrow {
 
-  color: var(--app-olive-dark);
+  margin: 0 0 8px;
 
-  letter-spacing: .18em;
+  color: var(--olive-dark);
+
+  font-size: .72rem;
+
+  font-weight: 800;
+
+  letter-spacing: .14em;
+
+  text-transform: uppercase;
 
 }
 
  
 
-/* ---------------------------------------------------------
+.app-shell {
 
-   UNIVERSAL CARDS
+  width: min(1120px, 100%);
 
---------------------------------------------------------- */
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  padding: 0 22px 100px;
+
+}
+
+ 
+
+.app-shell > header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 22px 0 18px;
+
+}
+
+ 
+
+.brand {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.25rem;
+
+  font-weight: 600;
+
+  color: var(--brown-dark);
+
+}
+
+ 
+
+.leaf {
+
+  color: var(--olive-dark);
+
+  font-size: 1.45rem;
+
+}
+
+ 
+
+.ghost {
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--brown-soft);
+
+  padding: 8px;
+
+}
+
+ 
+
+main {
+
+  width: min(940px, 100%);
+
+  margin: 0 auto;
+
+}
+
+ 
+
+.welcome {
+
+  padding: 30px 0 22px;
+
+}
+
+ 
+
+.welcome h2 {
+
+  max-width: 700px;
+
+  margin: 0 0 10px;
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(2rem, 5vw, 3.3rem);
+
+  font-weight: 500;
+
+}
+
+ 
+
+.section-title {
+
+  padding: 30px 0 24px;
+
+}
+
+ 
+
+.section-title h2 {
+
+  margin: 0 0 10px;
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+
+  font-weight: 500;
+
+}
+
+ 
+
+.section-title p {
+
+  max-width: 700px;
+
+}
+
+ 
+
+.section-heading-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin: 30px 0 12px;
+
+}
+
+ 
+
+.section-heading-row h3 {
+
+  margin: 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.35rem;
+
+  font-weight: 500;
+
+}
 
  
 
@@ -294,23 +472,15 @@ h2 {
 
 .error-state {
 
-  border-color: var(--app-line);
+  border: 1px solid rgba(93,70,56,.10);
 
-  border-radius: 26px;
+  border-radius: 22px;
 
-  background:
+  background: rgba(255,253,249,.92);
 
-    linear-gradient(
+  box-shadow:
 
-      145deg,
-
-      rgba(255,253,250,.97),
-
-      rgba(255,251,246,.91)
-
-    );
-
-  box-shadow: var(--app-shadow-soft);
+    0 12px 35px rgba(70,53,43,.055);
 
 }
 
@@ -318,73 +488,29 @@ h2 {
 
 .card {
 
-  padding: 28px;
+  padding: 24px;
+
+  margin-bottom: 20px;
 
 }
-
- 
-
-.connected-record {
-
-  padding: 28px;
-
-}
-
- 
-
-.entry {
-
-  transition:
-
-    transform .18s ease,
-
-    box-shadow .18s ease;
-
-}
-
- 
-
-.entry:hover {
-
-  transform: translateY(-2px);
-
-  box-shadow: var(--app-shadow);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   SCRIPTURE / FEATURE CARDS
-
---------------------------------------------------------- */
 
  
 
 .scripture {
 
-  border-radius: 28px;
+  padding: 32px;
+
+  margin-bottom: 22px;
 
   background:
-
-    radial-gradient(
-
-      circle at top right,
-
-      rgba(255,255,255,.8),
-
-      transparent 35%
-
-    ),
 
     linear-gradient(
 
       135deg,
 
-      #eeefe7,
+      #f0efe7,
 
-      #faf8f2
+      #fbf9f2
 
     );
 
@@ -392,75 +518,41 @@ h2 {
 
  
 
-/* ---------------------------------------------------------
+.scripture blockquote {
 
-   FORMS
+  margin: 10px 0 16px;
 
---------------------------------------------------------- */
+  font-family: Georgia, serif;
 
- 
+  font-size: clamp(1.35rem, 3vw, 2rem);
 
-input,
+  line-height: 1.5;
 
-textarea,
-
-select {
-
-  border-color: rgba(98,74,59,.12);
-
-  border-radius: 17px;
-
-  background: rgba(255,255,255,.78);
-
-  box-shadow:
-
-    inset 0 1px 0 rgba(255,255,255,.7);
+  color: var(--brown-dark);
 
 }
 
  
 
-textarea {
+.grid {
 
-  min-height: 150px;
+  display: grid;
 
-}
+  grid-template-columns:
 
- 
+    repeat(2, minmax(0, 1fr));
 
-input:hover,
-
-textarea:hover,
-
-select:hover {
-
-  border-color: rgba(123,130,109,.30);
+  gap: 20px;
 
 }
 
  
 
-input:focus,
+.grid .card {
 
-textarea:focus,
-
-select:focus {
-
-  border-color: var(--app-olive);
-
-  box-shadow:
-
-    0 0 0 4px rgba(123,130,109,.10);
+  height: 100%;
 
 }
-
- 
-
-/* ---------------------------------------------------------
-
-   BUTTONS
-
---------------------------------------------------------- */
 
  
 
@@ -472,11 +564,33 @@ select:focus {
 
 .danger-button {
 
-  border-radius: 15px;
+  border-radius: 12px;
 
-  min-height: 44px;
+  padding: 11px 16px;
 
-  font-weight: 650;
+  border: 1px solid transparent;
+
+  transition:
+
+    transform .15s ease,
+
+    box-shadow .15s ease,
+
+    background .15s ease;
+
+}
+
+ 
+
+.primary:hover,
+
+.secondary:hover,
+
+.small:hover,
+
+.danger-button:hover {
+
+  transform: translateY(-1px);
 
 }
 
@@ -484,21 +598,9 @@ select:focus {
 
 .primary {
 
-  background:
+  background: var(--brown);
 
-    linear-gradient(
-
-      135deg,
-
-      #654c3c,
-
-      #594334
-
-    );
-
-  box-shadow:
-
-    0 8px 20px rgba(98,74,59,.12);
+  color: var(--white);
 
 }
 
@@ -506,17 +608,11 @@ select:focus {
 
 .primary:hover {
 
-  background:
+  background: var(--brown-dark);
 
-    linear-gradient(
+  box-shadow:
 
-      135deg,
-
-      #594334,
-
-      #4b382d
-
-    );
+    0 8px 18px rgba(93,70,56,.15);
 
 }
 
@@ -524,9 +620,11 @@ select:focus {
 
 .secondary {
 
-  background: var(--app-sage);
+  background: var(--sage);
 
-  border-color: rgba(123,130,109,.12);
+  color: var(--brown-dark);
+
+  border-color: rgba(120,128,106,.15);
 
 }
 
@@ -534,69 +632,307 @@ select:focus {
 
 .secondary:hover {
 
-  background: #dfe2d6;
+  background: #dde0d2;
 
 }
 
  
 
-/* ---------------------------------------------------------
+.small {
 
-   SECTION HEADERS
+  padding: 8px 11px;
 
---------------------------------------------------------- */
+  background: var(--paper);
 
- 
+  color: var(--brown);
 
-.section-title {
+  border-color: var(--line);
 
-  padding: 38px 0 28px;
-
-}
-
- 
-
-.section-title h2 {
-
-  margin-top: 6px;
+  font-size: .8rem;
 
 }
 
  
 
-.section-heading-row {
+.danger-button {
 
-  margin-top: 34px;
+  background: rgba(161,93,86,.09);
+
+  color: var(--danger);
+
+  border-color: rgba(161,93,86,.2);
 
 }
 
  
 
-/* ---------------------------------------------------------
+.link {
 
-   REFLECTION EXPERIENCE
+  border: 0;
 
---------------------------------------------------------- */
+  background: transparent;
+
+  color: var(--olive-dark);
+
+  padding: 8px 0;
+
+  text-decoration: none;
+
+}
 
  
 
-.reflection-detail-card {
+.link:hover {
 
-  padding: 30px;
+  text-decoration: underline;
 
-  border-radius: 28px;
+}
+
+ 
+
+.button-row {
+
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+}
+
+ 
+
+.voice-row {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 0 0 16px;
+
+}
+
+ 
+
+.row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+}
+
+ 
+
+.pill-row {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+}
+
+ 
+
+.pill {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  border-radius: 999px;
+
+  padding: 5px 9px;
+
+  background: #eee9e2;
+
+  color: var(--brown-soft);
+
+  font-size: .72rem;
+
+  font-weight: 700;
+
+  text-transform: capitalize;
+
+}
+
+ 
+
+.pill.answered {
+
+  background: var(--sage);
+
+  color: var(--olive-dark);
+
+}
+
+ 
+
+.pill.active {
+
+  background: rgba(201,170,160,.17);
+
+  color: var(--brown-soft);
+
+}
+
+ 
+
+.list {
+
+  display: grid;
+
+  gap: 14px;
+
+}
+
+ 
+
+.entry {
+
+  padding: 21px;
+
+}
+
+ 
+
+.entry small {
+
+  color: var(--muted);
+
+}
+
+ 
+
+.entry h3 {
+
+  margin: 8px 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.25rem;
+
+  font-weight: 500;
+
+}
+
+ 
+
+.entry p {
+
+  margin-bottom: 0;
+
+}
+
+ 
+
+.answer-block {
+
+  margin-top: 16px;
+
+  padding: 15px;
+
+  border-radius: 15px;
+
+  background: #f4f1eb;
+
+}
+
+ 
+
+.answer-block p {
+
+  margin-top: 0;
+
+}
+
+ 
+
+.daily-reflection-card {
 
   background:
 
     linear-gradient(
 
-      145deg,
+      135deg,
 
-      rgba(255,253,249,.98),
+      rgba(232,234,223,.85),
 
-      rgba(242,243,235,.88)
+      rgba(255,253,249,.96)
 
     );
+
+}
+
+ 
+
+.memory-save-option {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 15px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 15px;
+
+  background: #faf8f3;
+
+  cursor: pointer;
+
+}
+
+ 
+
+.memory-save-option input {
+
+  width: 19px;
+
+  height: 19px;
+
+  flex: 0 0 auto;
+
+  margin: 2px 0 0;
+
+  accent-color: var(--olive-dark);
+
+}
+
+ 
+
+.memory-save-option span {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+}
+
+ 
+
+.memory-save-option small {
+
+  color: var(--muted);
+
+  font-weight: 400;
+
+  line-height: 1.5;
 
 }
 
@@ -604,7 +940,31 @@ select:focus {
 
 .reflection-history-card {
 
-  border-radius: 24px;
+  background: rgba(232,234,223,.45);
+
+}
+
+ 
+
+/* =========================================================
+
+   MEMORY BANK
+
+========================================================= */
+
+ 
+
+.memory-intro {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 15px;
+
+  padding: 20px;
+
+  margin-bottom: 20px;
 
   background:
 
@@ -612,275 +972,7 @@ select:focus {
 
       135deg,
 
-      rgba(232,234,223,.72),
-
-      rgba(255,253,249,.95)
-
-    );
-
-}
-
- 
-
-.reflection-detail-text {
-
-  font-family: Georgia, serif;
-
-  font-size: 1.18rem;
-
-  line-height: 1.9;
-
-  color: var(--app-brown-dark);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   MEMORY DETAIL
-
---------------------------------------------------------- */
-
- 
-
-.memory-detail-page {
-
-  padding-bottom: 40px;
-
-}
-
- 
-
-.memory-detail-hero {
-
-  position: relative;
-
-  padding: 34px 0 30px;
-
-}
-
- 
-
-.memory-detail-hero::after {
-
-  content: "🌿";
-
-  position: absolute;
-
-  top: 10px;
-
-  right: 22px;
-
-  font-size: 4.5rem;
-
-  opacity: .10;
-
-  transform: rotate(-12deg);
-
-  pointer-events: none;
-
-}
-
- 
-
-.memory-detail-eyebrow {
-
-  margin-bottom: 12px;
-
-}
-
- 
-
-.memory-detail-hero h2 {
-
-  max-width: 850px;
-
-  margin: 0 0 18px;
-
-  font-family: Georgia, serif;
-
-  font-size: clamp(2.8rem, 6vw, 4.8rem);
-
-  font-weight: 500;
-
-  line-height: 1.03;
-
-  letter-spacing: -.035em;
-
-}
-
- 
-
-.saved-badge {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  border-radius: 999px;
-
-  padding: 8px 13px;
-
-  background: rgba(232,234,223,.85);
-
-  color: var(--app-olive-dark);
-
-  font-size: .82rem;
-
-  font-weight: 700;
-
-}
-
- 
-
-.saved-badge span {
-
-  font-size: .95rem;
-
-}
-
- 
-
-/* Original prayer */
-
- 
-
-.prayer-memory-card {
-
-  margin-top: 8px;
-
-  background:
-
-    linear-gradient(
-
-      135deg,
-
-      rgba(255,253,249,.98),
-
-      rgba(255,250,245,.94)
-
-    );
-
-}
-
- 
-
-.prayer-memory-card .connected-icon {
-
-  width: 52px;
-
-  height: 52px;
-
-  background: #edf0e7;
-
-  font-size: 1.35rem;
-
-}
-
- 
-
-.record-body {
-
-  margin: 16px 0 0;
-
-  line-height: 1.75;
-
-}
-
- 
-
-/* Answered prayer */
-
- 
-
-.answer-record {
-
-  position: relative;
-
-  margin-top: 18px;
-
-  border-color: rgba(123,130,109,.12);
-
-  background:
-
-    linear-gradient(
-
-      135deg,
-
-      rgba(235,237,227,.86),
-
-      rgba(249,248,241,.94)
-
-    );
-
-}
-
- 
-
-.answer-record .answer-icon {
-
-  background: rgba(255,255,255,.72);
-
-}
-
- 
-
-.connected-record-header {
-
-  position: relative;
-
-}
-
- 
-
-.record-date {
-
-  margin-left: auto;
-
-  color: var(--app-olive-dark);
-
-  font-size: .78rem;
-
-  font-weight: 700;
-
-  white-space: nowrap;
-
-}
-
- 
-
-/* Reflection = memory */
-
- 
-
-.reflection-memory-card {
-
-  margin-top: 18px;
-
-  padding: 30px;
-
-  border: 1px solid rgba(123,130,109,.15);
-
-  background:
-
-    radial-gradient(
-
-      circle at top right,
-
-      rgba(255,255,255,.72),
-
-      transparent 35%
-
-    ),
-
-    linear-gradient(
-
-      145deg,
-
-      #f0f1e9,
+      #eff0e8,
 
       #fbfaf6
 
@@ -890,37 +982,239 @@ select:focus {
 
  
 
-.reflection-memory-card .reflection-icon {
+.memory-intro-icon {
 
-  background: rgba(255,255,255,.70);
+  display: grid;
 
-  color: var(--app-olive-dark);
+  place-items: center;
+
+  width: 44px;
+
+  height: 44px;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: rgba(120,128,106,.13);
+
+  font-size: 1.25rem;
 
 }
 
  
 
-.reflection-subtitle {
+.memory-intro strong {
 
-  margin: 3px 0 0;
+  display: block;
 
-  color: var(--app-muted, #81766d);
-
-  font-size: .82rem;
+  margin-bottom: 4px;
 
 }
 
  
 
-.reflection-prompt-display {
+.memory-intro p {
 
-  max-width: 760px;
+  margin: 0;
 
-  margin: 8px 0 20px 54px;
+  color: var(--muted);
 
-  color: var(--app-brown-soft);
+  font-size: .92rem;
 
-  font-size: .95rem;
+}
+
+ 
+
+.memory-controls {
+
+  padding: 20px;
+
+}
+
+ 
+
+.memory-search-wrap {
+
+  margin-bottom: 16px;
+
+}
+
+ 
+
+.memory-search-label {
+
+  margin-bottom: 0;
+
+}
+
+ 
+
+.memory-search {
+
+  min-height: 48px;
+
+  font-size: 1rem;
+
+}
+
+ 
+
+.memory-filter-grid {
+
+  display: grid;
+
+  grid-template-columns:
+
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+
+}
+
+ 
+
+.memory-filter-grid label {
+
+  margin-bottom: 0;
+
+}
+
+ 
+
+.memory-results-header {
+
+  margin: 22px 0 10px;
+
+  color: var(--muted);
+
+  font-size: .85rem;
+
+}
+
+ 
+
+.memory-grid {
+
+  display: grid;
+
+  grid-template-columns:
+
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+
+}
+
+ 
+
+.memory-card {
+
+  min-width: 0;
+
+  padding: 20px;
+
+  cursor: pointer;
+
+  transition:
+
+    transform .16s ease,
+
+    box-shadow .16s ease,
+
+    border-color .16s ease;
+
+}
+
+ 
+
+.memory-card:hover,
+
+.memory-card:focus-visible {
+
+  transform: translateY(-2px);
+
+  border-color: rgba(120,128,106,.4);
+
+  box-shadow:
+
+    0 16px 38px rgba(70,53,43,.10);
+
+  outline: none;
+
+}
+
+ 
+
+.memory-card-top {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 16px;
+
+}
+
+ 
+
+.memory-source {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: var(--olive-dark);
+
+  font-size: .75rem;
+
+  font-weight: 800;
+
+  letter-spacing: .03em;
+
+}
+
+ 
+
+.memory-date {
+
+  color: var(--muted);
+
+  font-size: .72rem;
+
+  text-align: right;
+
+}
+
+ 
+
+.memory-card h3 {
+
+  margin: 0 0 10px;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.3rem;
+
+  font-weight: 500;
+
+}
+
+ 
+
+.memory-card p {
+
+  min-height: 76px;
+
+  margin: 0;
+
+  color: var(--brown-soft);
 
   line-height: 1.65;
 
@@ -928,9 +1222,3673 @@ select:focus {
 
  
 
+.memory-card-footer {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 20px;
+
+  padding-top: 14px;
+
+  border-top: 1px solid var(--line);
+
+  color: var(--olive-dark);
+
+  font-size: .82rem;
+
+  font-weight: 700;
+
+}
+
+ 
+
+.memory-arrow {
+
+  font-size: 1.1rem;
+
+}
+
+ 
+
+.memory-empty {
+
+  margin-top: 20px;
+
+}
+
+ 
+
+.empty-state,
+
+.error-state {
+
+  padding: 40px 24px;
+
+  margin-top: 20px;
+
+  text-align: center;
+
+}
+
+ 
+
+.empty-icon {
+
+  margin-bottom: 12px;
+
+  font-size: 2rem;
+
+}
+
+ 
+
+.empty-state h3,
+
+.error-state h3 {
+
+  margin: 0 0 8px;
+
+  font-family: Georgia, serif;
+
+  font-weight: 500;
+
+}
+
+ 
+
+.empty-state p,
+
+.error-state p {
+
+  max-width: 520px;
+
+  margin: 0 auto 18px;
+
+  color: var(--muted);
+
+}
+
+ 
+
+.error-state {
+
+  border-color: rgba(161,93,86,.2);
+
+}
+
+ 
+
+/* =========================================================
+
+   MEMORY DETAIL
+
+========================================================= */
+
+ 
+
+.detail-back {
+
+  padding-top: 24px;
+
+}
+
+ 
+
+.back-button {
+
+  font-size: .9rem;
+
+}
+
+ 
+
+.memory-detail-main {
+
+  padding: 32px;
+
+  background:
+
+    linear-gradient(
+
+      135deg,
+
+      #fffdf9,
+
+      #f4f2ea
+
+    );
+
+}
+
+ 
+
+.memory-detail-label {
+
+  margin-bottom: 16px;
+
+  color: var(--olive-dark);
+
+  font-size: .72rem;
+
+  font-weight: 800;
+
+  letter-spacing: .14em;
+
+}
+
+ 
+
+.memory-full-text {
+
+  font-family: Georgia, serif;
+
+  font-size: 1.35rem;
+
+  line-height: 1.8;
+
+  color: var(--brown-dark);
+
+}
+
+ 
+
+.connected-record {
+
+  margin: 18px 0;
+
+  padding: 23px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 20px;
+
+  background: rgba(255,253,249,.8);
+
+}
+
+ 
+
+.connected-record-header {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+
+  margin-bottom: 14px;
+
+}
+
+ 
+
+.connected-record-header h3 {
+
+  margin: 2px 0 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.2rem;
+
+  font-weight: 500;
+
+}
+
+ 
+
+.connected-icon {
+
+  display: grid;
+
+  place-items: center;
+
+  width: 40px;
+
+  height: 40px;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: var(--sage);
+
+}
+
+ 
+
+.answer-record {
+
+  background:
+
+    rgba(232,234,223,.5);
+
+}
+
+ 
+
+.reflection-detail-text {
+
+  line-height: 1.8;
+
+  white-space: normal;
+
+}
+
+ 
+
+.memory-actions-card {
+
+  margin-top: 22px;
+
+}
+
+ 
+
+/* =========================================================
+
+   AUTH
+
+========================================================= */
+
+ 
+
+.auth {
+
+  width: min(460px, calc(100% - 40px));
+
+  min-height: 100vh;
+
+  margin: 0 auto;
+
+  padding-top: 12vh;
+
+  text-align: center;
+
+}
+
+ 
+
+.auth .mark {
+
+  color: var(--olive-dark);
+
+  font-size: 2.4rem;
+
+}
+
+ 
+
+.auth h1 {
+
+  margin: 8px 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 3rem;
+
+  font-weight: 500;
+
+}
+
+ 
+
+.auth .tag {
+
+  margin-bottom: 26px;
+
+  color: var(--muted);
+
+  line-height: 1.6;
+
+}
+
+ 
+
+.auth .card {
+
+  text-align: left;
+
+}
+
+ 
+
+.tabs {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  margin-bottom: 22px;
+
+  border-bottom: 1px solid var(--line);
+
+}
+
+ 
+
+.tabs button {
+
+  padding: 12px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--muted);
+
+}
+
+ 
+
+.tabs button.active {
+
+  color: var(--brown-dark);
+
+  border-bottom: 2px solid var(--olive-dark);
+
+}
+
+ 
+
+/* =========================================================
+
+   NAV
+
+========================================================= */
+
+ 
+
+.bottom-nav {
+
+  position: fixed;
+
+  z-index: 20;
+
+  left: 50%;
+
+  bottom: 16px;
+
+  transform: translateX(-50%);
+
+  display: grid;
+
+  grid-template-columns:
+
+    repeat(5, minmax(0, 1fr));
+
+  width: min(700px, calc(100% - 30px));
+
+  padding: 7px;
+
+  border: 1px solid rgba(93,70,56,.10);
+
+  border-radius: 20px;
+
+  background: rgba(255,253,249,.94);
+
+  box-shadow:
+
+    0 16px 45px rgba(70,53,43,.15);
+
+  backdrop-filter: blur(14px);
+
+}
+
+ 
+
+.bottom-nav button {
+
+  min-height: 45px;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  font-size: .75rem;
+
+  font-weight: 700;
+
+}
+
+ 
+
+.bottom-nav button.active {
+
+  background: var(--sage);
+
+  color: var(--brown-dark);
+
+}
+
+ 
+
+/* =========================================================
+
+   RESPONSIVE
+
+========================================================= */
+
+ 
+
+@media (max-width: 760px) {
+
+  .app-shell {
+
+    padding-left: 15px;
+
+    padding-right: 15px;
+
+  }
+
+ 
+
+  .grid,
+
+  .memory-grid,
+
+  .memory-filter-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+ 
+
+  .memory-card p {
+
+    min-height: auto;
+
+  }
+
+ 
+
+  .memory-card-top {
+
+    align-items: flex-start;
+
+  }
+
+ 
+
+  .memory-date {
+
+    max-width: 120px;
+
+  }
+
+ 
+
+  .card,
+
+  .scripture,
+
+  .memory-detail-main {
+
+    padding: 20px;
+
+  }
+
+ 
+
+  .bottom-nav {
+
+    width: calc(100% - 20px);
+
+    bottom: 10px;
+
+  }
+
+ 
+
+  .bottom-nav button {
+
+    font-size: .68rem;
+
+  }
+
+ 
+
+  .welcome h2 {
+
+    font-size: 2.25rem;
+
+  }
+
+ 
+
+  .section-title h2 {
+
+    font-size: 2rem;
+
+  }
+
+ 
+
+  .memory-full-text {
+
+    font-size: 1.18rem;
+
+  }
+
+ 
+
+  .row {
+
+    align-items: flex-start;
+
+  }
+
+}
+
+ 
+
+@media (max-width: 460px) {
+
+  .app-shell > header {
+
+    padding-top: 15px;
+
+  }
+
+ 
+
+  .brand {
+
+    font-size: 1.08rem;
+
+  }
+
+ 
+
+  .ghost {
+
+    font-size: .78rem;
+
+  }
+
+ 
+
+  .bottom-nav button {
+
+    min-height: 42px;
+
+    padding: 4px;
+
+  }
+
+ 
+
+  .memory-intro {
+
+    padding: 17px;
+
+  }
+
+ 
+
+  .memory-card {
+
+    padding: 17px;
+
+  }
+
+ 
+
+  .button-row {
+
+    align-items: stretch;
+
+  }
+
+ 
+
+  .button-row button {
+
+    width: 100%;
+
+  }
+
+}/* =========================================================
+
+ 
+
+   FOLow HIM — GLOBAL APP EXPERIENCE
+
+ 
+
+   Soft visual system
+
+ 
+
+========================================================= */
+
+ 
+
+ 
+
+ 
+
+:root {
+
+ 
+
+  --app-cream: #f7f3eb;
+
+ 
+
+  --app-paper: #fffdfa;
+
+ 
+
+  --app-paper-soft: #fbf8f2;
+
+ 
+
+ 
+
+ 
+
+  --app-brown: #624a3b;
+
+ 
+
+  --app-brown-dark: #49372d;
+
+ 
+
+  --app-brown-soft: #806a5b;
+
+ 
+
+ 
+
+ 
+
+  --app-olive: #7b826d;
+
+ 
+
+  --app-olive-dark: #68705a;
+
+ 
+
+  --app-sage: #e9ebe1;
+
+ 
+
+  --app-sage-soft: #f0f1e9;
+
+ 
+
+ 
+
+ 
+
+  --app-line: rgba(98, 74, 59, .10);
+
+ 
+
+  --app-shadow:
+
+ 
+
+    0 18px 50px rgba(73, 55, 45, .07);
+
+ 
+
+ 
+
+ 
+
+  --app-shadow-soft:
+
+ 
+
+    0 10px 30px rgba(73, 55, 45, .045);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   GLOBAL BACKGROUND
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+html {
+
+ 
+
+  background: var(--app-cream);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+body {
+
+ 
+
+  background:
+
+ 
+
+    radial-gradient(
+
+ 
+
+      circle at 8% 4%,
+
+ 
+
+      rgba(255,255,255,.92),
+
+ 
+
+      transparent 30%
+
+ 
+
+    ),
+
+ 
+
+    radial-gradient(
+
+ 
+
+      circle at 92% 12%,
+
+ 
+
+      rgba(232,234,223,.50),
+
+ 
+
+      transparent 28%
+
+ 
+
+    ),
+
+ 
+
+    linear-gradient(
+
+ 
+
+      180deg,
+
+ 
+
+      #faf7f1 0%,
+
+ 
+
+      var(--app-cream) 100%
+
+ 
+
+    );
+
+ 
+
+ 
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   APP CONTAINER
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.app-shell {
+
+ 
+
+  position: relative;
+
+ 
+
+  width: min(1180px, 100%);
+
+ 
+
+  padding-bottom: 120px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+main {
+
+ 
+
+  width: min(1040px, 100%);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   HEADER
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.app-shell > header {
+
+ 
+
+  padding: 24px 0 18px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.brand {
+
+ 
+
+  gap: 10px;
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+  font-family: Georgia, serif;
+
+ 
+
+  font-size: 1.22rem;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.brand .leaf {
+
+ 
+
+  display: grid;
+
+ 
+
+  place-items: center;
+
+ 
+
+  width: 34px;
+
+ 
+
+  height: 34px;
+
+ 
+
+  border-radius: 50%;
+
+ 
+
+  background: var(--app-sage);
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+  font-size: 1.15rem;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.ghost {
+
+ 
+
+  border-radius: 999px;
+
+ 
+
+  padding: 9px 14px;
+
+ 
+
+  color: var(--app-brown-soft);
+
+ 
+
+  transition:
+
+ 
+
+    background .18s ease,
+
+ 
+
+    color .18s ease;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.ghost:hover {
+
+ 
+
+  background: rgba(255,255,255,.65);
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   TYPOGRAPHY
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+h1,
+
+ 
+
+h2,
+
+ 
+
+h3 {
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+h1,
+
+ 
+
+h2 {
+
+ 
+
+  font-family: Georgia, "Times New Roman", serif;
+
+ 
+
+  font-weight: 500;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.welcome h2,
+
+ 
+
+.section-title h2 {
+
+ 
+
+  line-height: 1.08;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.eyebrow {
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+  letter-spacing: .18em;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   UNIVERSAL CARDS
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.card,
+
+ 
+
+.scripture,
+
+ 
+
+.entry,
+
+ 
+
+.connected-record,
+
+ 
+
+.memory-card,
+
+ 
+
+.memory-intro,
+
+ 
+
+.empty-state,
+
+ 
+
+.error-state {
+
+ 
+
+  border-color: var(--app-line);
+
+ 
+
+  border-radius: 26px;
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      145deg,
+
+ 
+
+      rgba(255,253,250,.97),
+
+ 
+
+      rgba(255,251,246,.91)
+
+ 
+
+    );
+
+ 
+
+  box-shadow: var(--app-shadow-soft);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.card {
+
+ 
+
+  padding: 28px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.connected-record {
+
+ 
+
+  padding: 28px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.entry {
+
+ 
+
+  transition:
+
+ 
+
+    transform .18s ease,
+
+ 
+
+    box-shadow .18s ease;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.entry:hover {
+
+ 
+
+  transform: translateY(-2px);
+
+ 
+
+  box-shadow: var(--app-shadow);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   SCRIPTURE / FEATURE CARDS
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.scripture {
+
+ 
+
+  border-radius: 28px;
+
+ 
+
+  background:
+
+ 
+
+    radial-gradient(
+
+ 
+
+      circle at top right,
+
+ 
+
+      rgba(255,255,255,.8),
+
+ 
+
+      transparent 35%
+
+ 
+
+    ),
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      #eeefe7,
+
+ 
+
+      #faf8f2
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   FORMS
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+input,
+
+ 
+
+textarea,
+
+ 
+
+select {
+
+ 
+
+  border-color: rgba(98,74,59,.12);
+
+ 
+
+  border-radius: 17px;
+
+ 
+
+  background: rgba(255,255,255,.78);
+
+ 
+
+  box-shadow:
+
+ 
+
+    inset 0 1px 0 rgba(255,255,255,.7);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+textarea {
+
+ 
+
+  min-height: 150px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+input:hover,
+
+ 
+
+textarea:hover,
+
+ 
+
+select:hover {
+
+ 
+
+  border-color: rgba(123,130,109,.30);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+input:focus,
+
+ 
+
+textarea:focus,
+
+ 
+
+select:focus {
+
+ 
+
+  border-color: var(--app-olive);
+
+ 
+
+  box-shadow:
+
+ 
+
+    0 0 0 4px rgba(123,130,109,.10);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   BUTTONS
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.primary,
+
+ 
+
+.secondary,
+
+ 
+
+.small,
+
+ 
+
+.danger-button {
+
+ 
+
+  border-radius: 15px;
+
+ 
+
+  min-height: 44px;
+
+ 
+
+  font-weight: 650;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.primary {
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      #654c3c,
+
+ 
+
+      #594334
+
+ 
+
+    );
+
+ 
+
+  box-shadow:
+
+ 
+
+    0 8px 20px rgba(98,74,59,.12);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.primary:hover {
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      #594334,
+
+ 
+
+      #4b382d
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.secondary {
+
+ 
+
+  background: var(--app-sage);
+
+ 
+
+  border-color: rgba(123,130,109,.12);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.secondary:hover {
+
+ 
+
+  background: #dfe2d6;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   SECTION HEADERS
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.section-title {
+
+ 
+
+  padding: 38px 0 28px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.section-title h2 {
+
+ 
+
+  margin-top: 6px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.section-heading-row {
+
+ 
+
+  margin-top: 34px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   REFLECTION EXPERIENCE
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.reflection-detail-card {
+
+ 
+
+  padding: 30px;
+
+ 
+
+  border-radius: 28px;
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      145deg,
+
+ 
+
+      rgba(255,253,249,.98),
+
+ 
+
+      rgba(242,243,235,.88)
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.reflection-history-card {
+
+ 
+
+  border-radius: 24px;
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      rgba(232,234,223,.72),
+
+ 
+
+      rgba(255,253,249,.95)
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.reflection-detail-text {
+
+ 
+
+  font-family: Georgia, serif;
+
+ 
+
+  font-size: 1.18rem;
+
+ 
+
+  line-height: 1.9;
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   MEMORY DETAIL
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.memory-detail-page {
+
+ 
+
+  padding-bottom: 40px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-detail-hero {
+
+ 
+
+  position: relative;
+
+ 
+
+  padding: 34px 0 30px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-detail-hero::after {
+
+ 
+
+  content: "🌿";
+
+ 
+
+  position: absolute;
+
+ 
+
+  top: 10px;
+
+ 
+
+  right: 22px;
+
+ 
+
+  font-size: 4.5rem;
+
+ 
+
+  opacity: .10;
+
+ 
+
+  transform: rotate(-12deg);
+
+ 
+
+  pointer-events: none;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-detail-eyebrow {
+
+ 
+
+  margin-bottom: 12px;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-detail-hero h2 {
+
+ 
+
+  max-width: 850px;
+
+ 
+
+  margin: 0 0 18px;
+
+ 
+
+  font-family: Georgia, serif;
+
+ 
+
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+
+ 
+
+  font-weight: 500;
+
+ 
+
+  line-height: 1.03;
+
+ 
+
+  letter-spacing: -.035em;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.saved-badge {
+
+ 
+
+  display: inline-flex;
+
+ 
+
+  align-items: center;
+
+ 
+
+  gap: 8px;
+
+ 
+
+  border-radius: 999px;
+
+ 
+
+  padding: 8px 13px;
+
+ 
+
+  background: rgba(232,234,223,.85);
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+  font-size: .82rem;
+
+ 
+
+  font-weight: 700;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.saved-badge span {
+
+ 
+
+  font-size: .95rem;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* Original prayer */
+
+ 
+
+ 
+
+ 
+
+.prayer-memory-card {
+
+ 
+
+  margin-top: 8px;
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      rgba(255,253,249,.98),
+
+ 
+
+      rgba(255,250,245,.94)
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.prayer-memory-card .connected-icon {
+
+ 
+
+  width: 52px;
+
+ 
+
+  height: 52px;
+
+ 
+
+  background: #edf0e7;
+
+ 
+
+  font-size: 1.35rem;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.record-body {
+
+ 
+
+  margin: 16px 0 0;
+
+ 
+
+  line-height: 1.75;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* Answered prayer */
+
+ 
+
+ 
+
+ 
+
+.answer-record {
+
+ 
+
+  position: relative;
+
+ 
+
+  margin-top: 18px;
+
+ 
+
+  border-color: rgba(123,130,109,.12);
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      rgba(235,237,227,.86),
+
+ 
+
+      rgba(249,248,241,.94)
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.answer-record .answer-icon {
+
+ 
+
+  background: rgba(255,255,255,.72);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.connected-record-header {
+
+ 
+
+  position: relative;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.record-date {
+
+ 
+
+  margin-left: auto;
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+  font-size: .78rem;
+
+ 
+
+  font-weight: 700;
+
+ 
+
+  white-space: nowrap;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* Reflection = memory */
+
+ 
+
+ 
+
+ 
+
+.reflection-memory-card {
+
+ 
+
+  margin-top: 18px;
+
+ 
+
+  padding: 30px;
+
+ 
+
+  border: 1px solid rgba(123,130,109,.15);
+
+ 
+
+  background:
+
+ 
+
+    radial-gradient(
+
+ 
+
+      circle at top right,
+
+ 
+
+      rgba(255,255,255,.72),
+
+ 
+
+      transparent 35%
+
+ 
+
+    ),
+
+ 
+
+    linear-gradient(
+
+ 
+
+      145deg,
+
+ 
+
+      #f0f1e9,
+
+ 
+
+      #fbfaf6
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.reflection-memory-card .reflection-icon {
+
+ 
+
+  background: rgba(255,255,255,.70);
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.reflection-subtitle {
+
+ 
+
+  margin: 3px 0 0;
+
+ 
+
+  color: var(--app-muted, #81766d);
+
+ 
+
+  font-size: .82rem;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.reflection-prompt-display {
+
+ 
+
+  max-width: 760px;
+
+ 
+
+  margin: 8px 0 20px 54px;
+
+ 
+
+  color: var(--app-brown-soft);
+
+ 
+
+  font-size: .95rem;
+
+ 
+
+  line-height: 1.65;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
 .memory-reflection-text {
 
+ 
+
   margin-left: 54px;
+
+ 
+
+  padding: 22px 24px;
+
+ 
+
+  border-radius: 20px;
+
+ 
+
+  background: rgba(255,253,249,.78);
+
+ 
+
+  border: 1px solid rgba(98,74,59,.08);
+
+ 
+
+  font-family: Georgia, serif;
+
+ 
+
+  font-size: 1.22rem;
+
+ 
+
+  line-height: 1.85;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.reflection-card-footer {
+
+ 
+
+  display: flex;
+
+ 
+
+  align-items: center;
+
+ 
+
+  justify-content: space-between;
+
+ 
+
+  gap: 15px;
+
+ 
+
+  margin-top: 22px;
+
+ 
+
+  padding-top: 18px;
+
+ 
+
+  border-top: 1px solid rgba(98,74,59,.09);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-status {
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+  font-size: .82rem;
+
+ 
+
+  font-weight: 700;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   MEMORY ACTIONS
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.memory-actions-card {
+
+ 
+
+  padding: 25px 28px;
+
+ 
+
+  border-radius: 24px;
+
+ 
+
+  background: rgba(255,253,249,.76);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.soft-actions-card {
+
+ 
+
+  box-shadow: none;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.action-note {
+
+ 
+
+  margin-bottom: 0;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   MEMORY BANK
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.memory-intro {
+
+ 
+
+  border-radius: 25px;
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      #edf0e7,
+
+ 
+
+      #fbfaf6
+
+ 
+
+    );
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-controls {
+
+ 
+
+  border-radius: 24px;
+
+ 
+
+  background: rgba(255,253,249,.74);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-card {
+
+ 
+
+  border-radius: 24px;
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      145deg,
+
+ 
+
+      rgba(255,253,249,.98),
+
+ 
+
+      rgba(250,247,241,.94)
+
+ 
+
+    );
+
+ 
+
+  box-shadow: var(--app-shadow-soft);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-card:hover,
+
+ 
+
+.memory-card:focus-visible {
+
+ 
+
+  transform: translateY(-4px);
+
+ 
+
+  box-shadow: var(--app-shadow);
+
+ 
+
+  border-color: rgba(123,130,109,.25);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-card h3 {
+
+ 
+
+  font-size: 1.35rem;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.memory-card-footer {
+
+ 
+
+  color: var(--app-olive-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   EMPTY STATES
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.empty-state,
+
+ 
+
+.error-state {
+
+ 
+
+  border-radius: 26px;
+
+ 
+
+  background: rgba(255,253,249,.82);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.empty-icon {
+
+ 
+
+  display: inline-grid;
+
+ 
+
+  place-items: center;
+
+ 
+
+  width: 58px;
+
+ 
+
+  height: 58px;
+
+ 
+
+  border-radius: 50%;
+
+ 
+
+  background: var(--app-sage);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   BOTTOM NAV
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.bottom-nav {
+
+ 
+
+  width: min(760px, calc(100% - 30px));
+
+ 
+
+  padding: 8px;
+
+ 
+
+  border-radius: 25px;
+
+ 
+
+  background: rgba(255,253,249,.91);
+
+ 
+
+  border-color: rgba(98,74,59,.08);
+
+ 
+
+  box-shadow:
+
+ 
+
+    0 18px 50px rgba(73,55,45,.13);
+
+ 
+
+  backdrop-filter: blur(18px);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.bottom-nav button {
+
+ 
+
+  border-radius: 17px;
+
+ 
+
+  color: var(--app-brown-soft);
+
+ 
+
+  transition:
+
+ 
+
+    background .18s ease,
+
+ 
+
+    color .18s ease,
+
+ 
+
+    transform .18s ease;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.bottom-nav button:hover {
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+  background: rgba(232,234,223,.45);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.bottom-nav button.active {
+
+ 
+
+  background:
+
+ 
+
+    linear-gradient(
+
+ 
+
+      135deg,
+
+ 
+
+      #e7e9df,
+
+ 
+
+      #eff0e8
+
+ 
+
+    );
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   AUTH
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.auth {
+
+ 
+
+  padding-top: 10vh;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.auth h1 {
+
+ 
+
+  color: var(--app-brown-dark);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+.auth .mark {
+
+ 
+
+  display: inline-grid;
+
+ 
+
+  place-items: center;
+
+ 
+
+  width: 64px;
+
+ 
+
+  height: 64px;
+
+ 
+
+  border-radius: 50%;
+
+ 
+
+  background: var(--app-sage);
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   SMALL ICON CIRCLES
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+.connected-icon,
+
+ 
+
+.detail-icon {
+
+ 
+
+  border-radius: 50%;
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+/* ---------------------------------------------------------
+
+ 
+
+   MOBILE
+
+ 
+
+--------------------------------------------------------- */
+
+ 
+
+ 
+
+ 
+
+@media (max-width: 760px) {
+
+ 
+
+ 
+
+ 
+
+  .memory-detail-hero {
+
+ 
+
+    padding: 28px 0 24px;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-detail-hero::after {
+
+ 
+
+    right: 8px;
+
+ 
+
+    top: 8px;
+
+ 
+
+    font-size: 3.2rem;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-detail-hero h2 {
+
+ 
+
+    font-size: 2.65rem;
+
+ 
+
+    max-width: 90%;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .connected-record {
+
+ 
+
+    padding: 22px;
+
+ 
+
+    border-radius: 22px;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .record-date {
+
+ 
+
+    font-size: .7rem;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-reflection-text,
+
+ 
+
+  .reflection-prompt-display {
+
+ 
+
+    margin-left: 0;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .reflection-card-footer {
+
+ 
+
+    align-items: stretch;
+
+ 
+
+    flex-direction: column;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .reflection-card-footer button {
+
+ 
+
+    width: 100%;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-actions-card {
+
+ 
+
+    padding: 22px;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-actions-card .button-row {
+
+ 
+
+    flex-direction: column;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-actions-card button {
+
+ 
+
+    width: 100%;
+
+ 
+
+  }
+
+ 
+
+}
+
+ 
+
+ 
+
+ 
+
+@media (max-width: 460px) {
+
+ 
+
+ 
+
+ 
+
+  .memory-detail-hero h2 {
+
+ 
+
+    font-size: 2.25rem;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-detail-hero::after {
+
+ 
+
+    opacity: .07;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .reflection-memory-card {
+
+ 
+
+    padding: 20px;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .memory-reflection-text {
+
+ 
+
+    padding: 18px;
+
+ 
+
+    font-size: 1.08rem;
+
+ 
+
+  }
+
+ 
+
+ 
+
+ 
+
+  .bottom-nav {
+
+ 
+
+    width: calc(100% - 18px);
+
+ 
+
+    bottom: 9px;
+
+ 
+
+  }
+
+} 
+
+/* =========================================================
+
+   REFLECTION / ANSWERED PRAYER POLISH
+
+========================================================= */
+
+ 
+
+.answered-prayer-summary {
+
+  background:
+
+    linear-gradient(
+
+      145deg,
+
+      rgba(255,253,249,.98),
+
+      rgba(246,244,237,.90)
+
+    );
+
+}
+
+ 
+
+.reflection-summary-heading,
+
+.reflection-card-heading {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+}
+
+ 
+
+.reflection-summary-heading h3,
+
+.reflection-card-heading h3 {
+
+  margin: 3px 0 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.35rem;
+
+  font-weight: 500;
+
+}
+
+ 
+
+.reflection-card-heading {
+
+  margin-bottom: 20px;
+
+}
+
+ 
+
+.reflection-icon {
+
+  background: rgba(255,255,255,.74);
+
+  color: var(--app-olive-dark, #68705a);
+
+}
+
+ 
+
+.answer-note-soft {
+
+  margin-top: 18px;
+
+  padding: 17px 19px;
+
+  border-radius: 18px;
+
+  background: rgba(232,234,223,.55);
+
+  border: 1px solid rgba(123,130,109,.10);
+
+}
+
+ 
+
+.answer-note-soft p:last-child {
+
+  margin-bottom: 0;
+
+}
+
+ 
+
+.reflection-editor-card,
+
+.reflection-memory-card {
+
+  border-radius: 28px;
+
+  background:
+
+    radial-gradient(
+
+      circle at top right,
+
+      rgba(255,255,255,.78),
+
+      transparent 34%
+
+    ),
+
+    linear-gradient(
+
+      145deg,
+
+      #f0f1e9,
+
+      #fffdf9
+
+    );
+
+}
+
+ 
+
+.reflection-memory-card {
+
+  padding: 30px;
+
+}
+
+ 
+
+.reflection-detail-text {
+
+  margin: 0;
 
   padding: 22px 24px;
 
@@ -938,7 +4896,29 @@ select:focus {
 
   background: rgba(255,253,249,.78);
 
-  border: 1px solid rgba(98,74,59,.08);
+  border: 1px solid rgba(98,74,59,.07);
+
+  font-family: Georgia, serif;
+
+  font-size: 1.18rem;
+
+  line-height: 1.9;
+
+}
+
+ 
+
+.memory-reflection-text {
+
+  margin: 0;
+
+  padding: 22px 24px;
+
+  border-radius: 20px;
+
+  background: rgba(255,253,249,.78);
+
+  border: 1px solid rgba(98,74,59,.07);
 
   font-family: Georgia, serif;
 
@@ -960,9 +4940,9 @@ select:focus {
 
   gap: 15px;
 
-  margin-top: 22px;
+  margin-top: 20px;
 
-  padding-top: 18px;
+  padding-top: 17px;
 
   border-top: 1px solid rgba(98,74,59,.09);
 
@@ -970,9 +4950,23 @@ select:focus {
 
  
 
+.reflection-subtitle {
+
+  margin: 3px 0 0;
+
+  color: var(--app-brown-soft, #806a5b);
+
+  font-size: .86rem;
+
+  line-height: 1.55;
+
+}
+
+ 
+
 .memory-status {
 
-  color: var(--app-olive-dark);
+  color: var(--app-olive-dark, #68705a);
 
   font-size: .82rem;
 
@@ -982,29 +4976,9 @@ select:focus {
 
  
 
-/* ---------------------------------------------------------
-
-   MEMORY ACTIONS
-
---------------------------------------------------------- */
-
- 
-
-.memory-actions-card {
-
-  padding: 25px 28px;
-
-  border-radius: 24px;
-
-  background: rgba(255,253,249,.76);
-
-}
-
- 
-
 .soft-actions-card {
 
-  box-shadow: none;
+  margin-top: 20px;
 
 }
 
@@ -1012,347 +4986,15 @@ select:focus {
 
 .action-note {
 
-  margin-bottom: 0;
+  margin: -2px 0 18px;
 
 }
 
  
-
-/* ---------------------------------------------------------
-
-   MEMORY BANK
-
---------------------------------------------------------- */
-
- 
-
-.memory-intro {
-
-  border-radius: 25px;
-
-  background:
-
-    linear-gradient(
-
-      135deg,
-
-      #edf0e7,
-
-      #fbfaf6
-
-    );
-
-}
-
- 
-
-.memory-controls {
-
-  border-radius: 24px;
-
-  background: rgba(255,253,249,.74);
-
-}
-
- 
-
-.memory-card {
-
-  border-radius: 24px;
-
-  background:
-
-    linear-gradient(
-
-      145deg,
-
-      rgba(255,253,249,.98),
-
-      rgba(250,247,241,.94)
-
-    );
-
-  box-shadow: var(--app-shadow-soft);
-
-}
-
- 
-
-.memory-card:hover,
-
-.memory-card:focus-visible {
-
-  transform: translateY(-4px);
-
-  box-shadow: var(--app-shadow);
-
-  border-color: rgba(123,130,109,.25);
-
-}
-
- 
-
-.memory-card h3 {
-
-  font-size: 1.35rem;
-
-}
-
- 
-
-.memory-card-footer {
-
-  color: var(--app-olive-dark);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   EMPTY STATES
-
---------------------------------------------------------- */
-
- 
-
-.empty-state,
-
-.error-state {
-
-  border-radius: 26px;
-
-  background: rgba(255,253,249,.82);
-
-}
-
- 
-
-.empty-icon {
-
-  display: inline-grid;
-
-  place-items: center;
-
-  width: 58px;
-
-  height: 58px;
-
-  border-radius: 50%;
-
-  background: var(--app-sage);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   BOTTOM NAV
-
---------------------------------------------------------- */
-
- 
-
-.bottom-nav {
-
-  width: min(760px, calc(100% - 30px));
-
-  padding: 8px;
-
-  border-radius: 25px;
-
-  background: rgba(255,253,249,.91);
-
-  border-color: rgba(98,74,59,.08);
-
-  box-shadow:
-
-    0 18px 50px rgba(73,55,45,.13);
-
-  backdrop-filter: blur(18px);
-
-}
-
- 
-
-.bottom-nav button {
-
-  border-radius: 17px;
-
-  color: var(--app-brown-soft);
-
-  transition:
-
-    background .18s ease,
-
-    color .18s ease,
-
-    transform .18s ease;
-
-}
-
- 
-
-.bottom-nav button:hover {
-
-  color: var(--app-brown-dark);
-
-  background: rgba(232,234,223,.45);
-
-}
-
- 
-
-.bottom-nav button.active {
-
-  background:
-
-    linear-gradient(
-
-      135deg,
-
-      #e7e9df,
-
-      #eff0e8
-
-    );
-
-  color: var(--app-brown-dark);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   AUTH
-
---------------------------------------------------------- */
-
- 
-
-.auth {
-
-  padding-top: 10vh;
-
-}
-
- 
-
-.auth h1 {
-
-  color: var(--app-brown-dark);
-
-}
-
- 
-
-.auth .mark {
-
-  display: inline-grid;
-
-  place-items: center;
-
-  width: 64px;
-
-  height: 64px;
-
-  border-radius: 50%;
-
-  background: var(--app-sage);
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   SMALL ICON CIRCLES
-
---------------------------------------------------------- */
-
- 
-
-.connected-icon,
-
-.detail-icon {
-
-  border-radius: 50%;
-
-}
-
- 
-
-/* ---------------------------------------------------------
-
-   MOBILE
-
---------------------------------------------------------- */
 
  
 
 @media (max-width: 760px) {
-
- 
-
-  .memory-detail-hero {
-
-    padding: 28px 0 24px;
-
-  }
-
- 
-
-  .memory-detail-hero::after {
-
-    right: 8px;
-
-    top: 8px;
-
-    font-size: 3.2rem;
-
-  }
-
- 
-
-  .memory-detail-hero h2 {
-
-    font-size: 2.65rem;
-
-    max-width: 90%;
-
-  }
-
- 
-
-  .connected-record {
-
-    padding: 22px;
-
-    border-radius: 22px;
-
-  }
-
- 
-
-  .record-date {
-
-    font-size: .7rem;
-
-  }
-
- 
-
-  .memory-reflection-text,
-
-  .reflection-prompt-display {
-
-    margin-left: 0;
-
-  }
-
- 
 
   .reflection-card-footer {
 
@@ -1372,7 +5014,9 @@ select:focus {
 
  
 
-  .memory-actions-card {
+  .reflection-memory-card,
+
+  .reflection-editor-card {
 
     padding: 22px;
 
@@ -1380,67 +5024,12 @@ select:focus {
 
  
 
-  .memory-actions-card .button-row {
+  .reflection-summary-heading,
 
-    flex-direction: column;
+  .reflection-card-heading {
 
-  }
-
- 
-
-  .memory-actions-card button {
-
-    width: 100%;
+    align-items: flex-start;
 
   }
 
 }
-
- 
-
-@media (max-width: 460px) {
-
- 
-
-  .memory-detail-hero h2 {
-
-    font-size: 2.25rem;
-
-  }
-
- 
-
-  .memory-detail-hero::after {
-
-    opacity: .07;
-
-  }
-
- 
-
-  .reflection-memory-card {
-
-    padding: 20px;
-
-  }
-
- 
-
-  .memory-reflection-text {
-
-    padding: 18px;
-
-    font-size: 1.08rem;
-
-  }
-
- 
-
-  .bottom-nav {
-
-    width: calc(100% - 18px);
-
-    bottom: 9px;
-
-  }
-} 
