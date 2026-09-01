@@ -1771,76 +1771,93 @@ async function memoryDetailView(
     await loadMemoryDetail(
       memory.id
     )
- 
+
   if (result.error) {
     return `
       <main>
- 
-        <section class="card">
- 
+
+        <div class="detail-back">
+          <button
+            class="link back-button"
+            id="backToMemoryBank"
+          >
+            ← Back to Memory Bank
+          </button>
+        </div>
+
+        <section class="card memory-detail-error">
+          <div class="memory-detail-icon">
+            🌿
+          </div>
+
+          <p class="eyebrow">
+            MEMORY
+          </p>
+
           <h2>
             We couldn't open this memory.
           </h2>
- 
+
           <p class="muted">
             ${esc(
               result.error.message
             )}
           </p>
- 
+
           <button
             class="secondary"
             data-view="memory-bank"
           >
             Back to Memory Bank
           </button>
- 
+
         </section>
- 
+
       </main>
     `
   }
- 
+
   const {
     prayer,
     reflection
   } = result
- 
+
+  const memoryText =
+    reflection?.reflection_text ||
+    memory.memory_text ||
+    ''
+
   return `
     <main>
- 
+
       <div class="detail-back">
- 
         <button
           class="link back-button"
           id="backToMemoryBank"
         >
           ← Back to Memory Bank
         </button>
- 
       </div>
- 
-      <div class="section-title">
- 
-        <p class="eyebrow">
-          ${sourceIcon(
-            memory.source_type
-          )}
-          ${esc(
-            sourceLabel(
+
+      <header class="memory-detail-header">
+
+        <div class="memory-detail-source">
+          <span class="memory-detail-source-icon">
+            ${sourceIcon(
               memory.source_type
-            )
-          )}
-        </p>
- 
-        <h2>
-          ${esc(
-            memory.title ||
-            'A lesson to remember'
-          )}
-        </h2>
- 
-        <p class="muted">
+            )}
+          </span>
+
+          <span>
+            ${esc(
+              sourceLabel(
+                memory.source_type
+              )
+            )}
+          </span>
+        </div>
+
+        <p class="memory-detail-date">
           Saved
           ${esc(
             formatDate(
@@ -1848,210 +1865,307 @@ async function memoryDetailView(
             )
           )}
         </p>
- 
-      </div>
- 
-      <section class="card memory-detail-main">
- 
-        <div class="memory-detail-label">
-          WHAT I WANT TO REMEMBER
-        </div>
- 
-        <div class="memory-full-text">
+
+        <h1>
           ${esc(
-            memory.memory_text
-          ).replace(
-            /\n/g,
-            '<br>'
+            memory.title ||
+            'A lesson to remember'
           )}
+        </h1>
+
+        <p class="memory-detail-intro">
+          A moment from your journey with God,
+          saved so you can return to it.
+        </p>
+
+      </header>
+
+      <section class="memory-story-card">
+
+        <div class="memory-story-heading">
+
+          <span class="memory-story-icon">
+            🌿
+          </span>
+
+          <div>
+            <p class="eyebrow">
+              WHAT I WANT TO REMEMBER
+            </p>
+
+            <p class="memory-story-subtitle">
+              Your reflection and the meaning
+              you want to carry forward.
+            </p>
+          </div>
+
         </div>
- 
+
+        <div class="memory-full-text">
+          ${
+            memoryText
+              ? esc(
+                  memoryText
+                ).replace(
+                  /\n/g,
+                  '<br>'
+                )
+              : `
+                <span class="muted">
+                  No reflection has been added yet.
+                </span>
+              `
+          }
+        </div>
+
+        ${
+          reflection
+            ? `
+              <div class="memory-reflection-meta">
+                Reflection updated
+                ${esc(
+                  formatDate(
+                    reflection.updated_at ||
+                    reflection.created_at
+                  )
+                )}
+              </div>
+            `
+            : ''
+        }
+
       </section>
- 
+
       ${
         prayer
           ? `
-            <section class="connected-record">
- 
+            <section class="connected-record memory-story-record">
+
               <div class="connected-record-header">
- 
+
                 <span class="connected-icon">
                   🙏
                 </span>
- 
+
                 <div>
- 
                   <p class="eyebrow">
-                    ORIGINAL PRAYER
+                    THE PRAYER
                   </p>
- 
+
                   <h3>
                     ${esc(
-                      prayer.title
+                      prayer.title ||
+                      'Prayer'
                     )}
                   </h3>
- 
                 </div>
- 
+
               </div>
- 
+
               ${
                 prayer.details
                   ? `
-                    <p>
+                    <div class="connected-record-text">
                       ${esc(
                         prayer.details
+                      ).replace(
+                        /\n/g,
+                        '<br>'
                       )}
+                    </div>
+                  `
+                  : `
+                    <p class="muted">
+                      No additional prayer details were recorded.
                     </p>
                   `
-                  : ''
               }
- 
+
             </section>
- 
+
             ${
               prayer.answer_note
                 ? `
-                  <section class="connected-record answer-record">
- 
-                    <p class="eyebrow">
-                      HOW GOD ANSWERED
-                    </p>
- 
-                    <p>
+                  <section class="connected-record answer-record memory-story-record">
+
+                    <div class="connected-record-header">
+
+                      <span class="connected-icon">
+                        ✨
+                      </span>
+
+                      <div>
+                        <p class="eyebrow">
+                          HOW GOD ANSWERED
+                        </p>
+
+                        <h3>
+                          The answer
+                        </h3>
+                      </div>
+
+                    </div>
+
+                    <div class="connected-record-text">
                       ${esc(
                         prayer.answer_note
+                      ).replace(
+                        /\n/g,
+                        '<br>'
                       )}
-                    </p>
- 
+                    </div>
+
                   </section>
                 `
                 : ''
             }
           `
-          : ''
+          : `
+            <section class="connected-record memory-story-record">
+
+              <div class="connected-record-header">
+
+                <span class="connected-icon">
+                  🙏
+                </span>
+
+                <div>
+                  <p class="eyebrow">
+                    THE PRAYER
+                  </p>
+
+                  <h3>
+                    No original prayer is connected.
+                  </h3>
+                </div>
+
+              </div>
+
+              <p class="muted">
+                This memory was created without a
+                connected prayer request.
+              </p>
+
+            </section>
+          `
       }
- 
+
       ${
         reflection
           ? `
-            <section class="connected-record">
- 
+            <section class="connected-record memory-reflection-link">
+
               <div class="connected-record-header">
- 
+
                 <span class="connected-icon">
-                  🌿
+                  📖
                 </span>
- 
+
                 <div>
- 
                   <p class="eyebrow">
                     CONNECTED REFLECTION
                   </p>
- 
-                  <p class="muted">
-                    Last updated
-                    ${esc(
-                      formatDate(
-                        reflection.updated_at ||
-                        reflection.created_at
-                      )
-                    )}
-                  </p>
- 
+
+                  <h3>
+                    Continue your reflection
+                  </h3>
                 </div>
- 
+
               </div>
- 
-              <div class="reflection-detail-text">
-                ${esc(
-                  reflection.reflection_text
-                ).replace(
-                  /\n/g,
-                  '<br>'
-                )}
-              </div>
- 
-              <div class="button-row">
- 
+
+              <p class="muted">
+                This memory comes from your reflection.
+                You can continue adding to it as you
+                understand the answer more deeply.
+              </p>
+
+              <button
+                class="secondary"
+                data-open-reflection-detail="${esc(
+                  reflection.id
+                )}"
+              >
+                Open reflection
+              </button>
+
+            </section>
+          `
+          : prayer
+            ? `
+              <section class="connected-record memory-reflection-link">
+
+                <div class="connected-record-header">
+
+                  <span class="connected-icon">
+                    📖
+                  </span>
+
+                  <div>
+                    <p class="eyebrow">
+                      REFLECTION
+                    </p>
+
+                    <h3>
+                      Add your reflection
+                    </h3>
+                  </div>
+
+                </div>
+
+                <p class="muted">
+                  Capture what this prayer and
+                  answer mean to you.
+                </p>
+
                 <button
                   class="secondary"
-                  data-edit-reflection="${esc(
-                    reflection.id
+                  data-open-reflection="${esc(
+                    prayer.id
                   )}"
                 >
-                  Edit reflection
+                  Add reflection
                 </button>
- 
-              </div>
- 
-            </section>
-          `
-          : `
-            <section class="connected-record">
- 
-              <p class="eyebrow">
-                CONNECTED REFLECTION
-              </p>
- 
-              <h3>
-                No reflection is connected yet.
-              </h3>
- 
-              ${
-                prayer
-                  ? `
-                    <button
-                      class="secondary"
-                      data-open-reflection="${esc(
-                        prayer.id
-                      )}"
-                    >
-                      Add a reflection
-                    </button>
-                  `
-                  : ''
-              }
- 
-            </section>
-          `
+
+              </section>
+            `
+            : ''
       }
- 
+
       <section class="card memory-actions-card">
- 
-        <p class="eyebrow">
-          MEMORY ACTIONS
-        </p>
- 
+
+        <div class="memory-actions-heading">
+          <p class="eyebrow">
+            YOUR MEMORY
+          </p>
+
+          <p class="muted">
+            Keep this moment available for future remembrance.
+          </p>
+        </div>
+
         <div class="button-row">
- 
+
           <button
             class="primary"
             id="editMemory"
           >
             Edit memory
           </button>
- 
+
           <button
             class="danger-button"
             id="deleteMemory"
           >
             Delete memory
           </button>
- 
+
         </div>
- 
-        <p class="muted">
-          Editing this memory does not change the
-          original prayer or reflection.
-        </p>
- 
+
       </section>
- 
+
     </main>
   `
 }
- 
 /* =========================================================
    MEMORY EDIT
 ========================================================= */
