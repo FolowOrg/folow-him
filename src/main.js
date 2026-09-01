@@ -1388,128 +1388,178 @@ async function memoryBankView() {
  
       </section>
  
-      <section class="card memory-controls">
- 
-        <div class="memory-search-wrap">
- 
-          <label
-            class="memory-search-label"
-            for="memorySearch"
+    <section class="card memory-controls">
+
+  <div class="memory-controls-heading">
+
+    <div>
+      <p class="eyebrow">
+        FIND A MEMORY
+      </p>
+
+      <h3>
+        Return to a moment
+      </h3>
+
+      <p class="muted">
+        Search your reflections or browse them
+        by source and date.
+      </p>
+    </div>
+
+    ${
+      state.memorySearch ||
+      state.memorySource !== 'all' ||
+      state.memorySort !== 'newest'
+        ? `
+          <button
+            class="small memory-clear-button"
+            id="clearMemoryFilters"
+            type="button"
           >
-            Search your memories
-          </label>
- 
-          <input
-            id="memorySearch"
-            class="memory-search"
-            type="search"
-            autocomplete="off"
-            value="${esc(
-              state.memorySearch
-            )}"
-            placeholder="Search a memory..."
-          >
- 
-        </div>
- 
-        <div class="memory-filter-grid">
- 
-          <label>
- 
-            Source
- 
-            <select
-              id="memorySource"
-            >
- 
-              <option
-                value="all"
-                ${
-                  state.memorySource === 'all'
-                    ? 'selected'
-                    : ''
-                }
-              >
-                All memories
-              </option>
- 
-              <option
-                value="answered_prayer"
-                ${
-                  state.memorySource ===
-                  'answered_prayer'
-                    ? 'selected'
-                    : ''
-                }
-              >
-                Answered Prayer
-              </option>
- 
-              <option
-                value="journal"
-                ${
-                  state.memorySource ===
-                  'journal'
-                    ? 'selected'
-                    : ''
-                }
-              >
-                Journal
-              </option>
- 
-              <option
-                value="daily_reflection"
-                ${
-                  state.memorySource ===
-                  'daily_reflection'
-                    ? 'selected'
-                    : ''
-                }
-              >
-                Daily Reflection
-              </option>
- 
-            </select>
- 
-          </label>
- 
-          <label>
- 
-            Sort
- 
-            <select
-              id="memorySort"
-            >
- 
-              <option
-                value="newest"
-                ${
-                  state.memorySort === 'newest'
-                    ? 'selected'
-                    : ''
-                }
-              >
-                Newest first
-              </option>
- 
-              <option
-                value="oldest"
-                ${
-                  state.memorySort === 'oldest'
-                    ? 'selected'
-                    : ''
-                }
-              >
-                Oldest first
-              </option>
- 
-            </select>
- 
-          </label>
- 
-        </div>
- 
-      </section>
+            Clear
+          </button>
+        `
+        : ''
+    }
+
+  </div>
+
+  <div class="memory-search-wrap">
+
+    <label
+      class="memory-search-label"
+      for="memorySearch"
+    >
+      Search memories
+    </label>
+
+    <div class="memory-search-field">
+
+      <span
+        class="memory-search-icon"
+        aria-hidden="true"
+      >
+        ⌕
+      </span>
+
+      <input
+        id="memorySearch"
+        class="memory-search"
+        type="search"
+        autocomplete="off"
+        value="${esc(
+          state.memorySearch
+        )}"
+        placeholder="Search your reflections..."
+        aria-label="Search your memories"
+      >
+
+    </div>
+
+  </div>
+
+  <div class="memory-filter-grid">
+
+    <label>
+      <span class="memory-filter-label">
+        Source
+      </span>
+
+      <select
+        id="memorySource"
+        aria-label="Filter memories by source"
+      >
+
+        <option
+          value="all"
+          ${
+            state.memorySource === 'all'
+              ? 'selected'
+              : ''
+          }
+        >
+          All memories
+        </option>
+
+        <option
+          value="answered_prayer"
+          ${
+            state.memorySource ===
+            'answered_prayer'
+              ? 'selected'
+              : ''
+          }
+        >
+          Answered Prayer
+        </option>
+
+        <option
+          value="journal"
+          ${
+            state.memorySource === 'journal'
+              ? 'selected'
+              : ''
+          }
+        >
+          Journal
+        </option>
+
+        <option
+          value="daily_reflection"
+          ${
+            state.memorySource ===
+            'daily_reflection'
+              ? 'selected'
+              : ''
+          }
+        >
+          Daily Reflection
+        </option>
+
+      </select>
+
+    </label>
+
+    <label>
+      <span class="memory-filter-label">
+        Sort by
+      </span>
+
+      <select
+        id="memorySort"
+        aria-label="Sort memories"
+      >
+
+        <option
+          value="newest"
+          ${
+            state.memorySort === 'newest'
+              ? 'selected'
+              : ''
+          }
+        >
+          Newest first
+        </option>
+
+        <option
+          value="oldest"
+          ${
+            state.memorySort === 'oldest'
+              ? 'selected'
+              : ''
+          }
+        >
+          Oldest first
+        </option>
+
+      </select>
+
+    </label>
+
+  </div>
+
+</section>
  
       ${
         error
